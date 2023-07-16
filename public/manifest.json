@@ -1,9 +1,10 @@
 {
   "manifestVersion": 1,
-  "id": "plugin_template",
-  "name": "Plugin Template",
-  "author": "remnote",
-  "repoUrl": "",
+  "id": "remnote-hannes-toolbox",
+  "name": "Hannes's RemNote Toolbox",
+  "author": "Hannes Frank",
+  "description": "My utilities and automations for RemNote.",
+  "repoUrl": "https://github.com/hannesfrank/remnote-hannes-toolbox",
   "version": {
     "major": 0,
     "minor": 0,
@@ -11,12 +12,11 @@
   },
   "theme": [],
   "enableOnMobile": false,
-  "description": "",
   "requestNative": false,
   "requiredScopes": [
     {
       "type": "All",
-      "level": "Read"
+      "level": "ReadCreateModifyDelete"
     }
   ]
 }
