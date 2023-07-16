@@ -1,6 +1,7 @@
 import { declareIndexPlugin, ReactRNPlugin, WidgetLocation } from '@remnote/plugin-sdk';
 import '../style.css';
 import '../App.css';
+import { writeFileSync } from 'fs';
 
 async function onActivate(plugin: ReactRNPlugin) {
   // Register settings
@@ -25,8 +26,9 @@ async function onActivate(plugin: ReactRNPlugin) {
   // A command that inserts text into the editor if focused.
   await plugin.app.registerCommand({
     id: 'editor-command',
-    name: 'Editor Command',
+    name: 'Write File',
     action: async () => {
+      await writeFileSync('/Users/hannesfrank/fromRemNote', "Hello from remnote");
       plugin.editor.insertPlainText('Hello World!');
     },
   });
