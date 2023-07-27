@@ -2,7 +2,10 @@ import { declareIndexPlugin, ReactRNPlugin, WidgetLocation } from '@remnote/plug
 import '../style.css';
 import '../App.css';
 import { writeFileSync } from 'fs';
-import { isDevMode, isSandboxed } from '../util/plugin_util';
+import { isDevMode, isSandboxed, RN_PLUGIN_TEST_MODE } from '../util/plugin_util';
+import FormatKeyboardShortcutCommand, {
+  testFormatKeyboardShortcut,
+} from '../commands/FormatKeyboardShortcutCommand';
 
 async function onActivate(plugin: ReactRNPlugin) {
   if (isDevMode()) {
@@ -57,6 +60,13 @@ async function onActivate(plugin: ReactRNPlugin) {
   // await plugin.app.registerWidget('sample_widget', WidgetLocation.RightSidebar, {
   //   dimensions: { height: 'auto', width: '100%' },
   // });
+
+  // Commands
+  await plugin.app.registerCommand(FormatKeyboardShortcutCommand(plugin));
+
+  if (isDevMode() && RN_PLUGIN_TEST_MODE.has(FormatKeyboardShortcutCommand(plugin).id)) {
+    await testFormatKeyboardShortcut(plugin);
+  }
 }
 
 async function onDeactivate(_: ReactRNPlugin) {}
