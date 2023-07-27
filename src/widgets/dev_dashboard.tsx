@@ -1,16 +1,16 @@
 import { usePlugin, renderWidget, useTracker, RNPlugin, Rem } from '@remnote/plugin-sdk';
-import { format } from 'path';
 import { ReactNode, createContext, useContext } from 'react';
+import RemNoteCSSProps from '../components/dev/RemNoteCSSProps';
 
 export const DevDashboard = () => {
   const plugin = usePlugin();
+
   return (
     <>
       <APINamespace name="app">
         <APIMethod method="getOperatingSystem" />
         <APIMethod method="getPlatform" />
       </APINamespace>
-
       <APINamespace name="focus">
         <APIMethod method="getFocusedRem" />
       </APINamespace>
@@ -18,6 +18,8 @@ export const DevDashboard = () => {
         <APIMethod method="getFocusedEditorText" />
         <APIMethod method="getSelection" />
       </APINamespace>
+
+      <RemNoteCSSProps />
     </>
   );
 };
