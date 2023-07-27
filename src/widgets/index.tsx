@@ -5,7 +5,9 @@ import { writeFileSync } from 'fs';
 import { isDevMode, isSandboxed, RN_PLUGIN_TEST_MODE } from '../util/plugin_util';
 import FormatKeyboardShortcutCommand, {
   testFormatKeyboardShortcut,
+  COMMAND_ID as FormatKeyboardShortcutCommandId,
 } from '../commands/FormatKeyboardShortcutCommand';
+import { REM_IDS } from '../constants/remIds';
 
 async function onActivate(plugin: ReactRNPlugin) {
   if (isDevMode()) {
@@ -62,9 +64,16 @@ async function onActivate(plugin: ReactRNPlugin) {
   // });
 
   // Commands
-  await plugin.app.registerCommand(FormatKeyboardShortcutCommand(plugin));
+  await plugin.app.registerCommand(
+    FormatKeyboardShortcutCommand(plugin, {
+      getShortcutTag: async () =>
+        (await plugin.kb.getCurrentKnowledgeBaseData()).name == 'hannesfrank'
+          ? REM_IDS.SHORTCUT_TAG
+          : null,
+    })
+  );
 
-  if (isDevMode() && RN_PLUGIN_TEST_MODE.has(FormatKeyboardShortcutCommand(plugin).id)) {
+  if (isDevMode() && RN_PLUGIN_TEST_MODE.has(FormatKeyboardShortcutCommandId)) {
     await testFormatKeyboardShortcut(plugin);
   }
 }

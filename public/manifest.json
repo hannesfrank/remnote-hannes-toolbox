@@ -17,6 +17,10 @@
     {
       "type": "All",
       "level": "ReadCreateModifyDelete"
+    },
+    {
+      "type": "KnowledgeBaseInfo",
+      "level": "Read"
     }
   ]
 }

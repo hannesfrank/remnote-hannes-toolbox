@@ -1,14 +1,16 @@
 import {
+  Command,
   RICH_TEXT_ELEMENT_TYPE,
   RICH_TEXT_FORMATTING,
   RNPlugin,
+  RemId,
   RichTextInterface,
 } from '@remnote/plugin-sdk';
 import _ from 'lodash';
 import { RN_PLUGIN_TEST_MODE } from '../util/plugin_util';
 
-const COMMAND_ID = 'format-keyboard-shortcut';
-const COMMAND_NAME = 'Format Back as Keyboard Shortcut';
+export const COMMAND_ID = 'format-keyboard-shortcut';
+export const COMMAND_NAME = 'Format Back as Keyboard Shortcut';
 
 // RN_PLUGIN_TEST_MODE.add(COMMAND_ID);
 
@@ -86,10 +88,15 @@ export async function formatKeyboardShortcut(
   return shortcutRichText;
 }
 
-export default function FormatKeyboardShortcutCommand(plugin: RNPlugin) {
+export default function FormatKeyboardShortcutCommand(
+  plugin: RNPlugin,
+  options: { getShortcutTag?: () => Promise<RemId | null> } = {}
+): Command {
   return {
     id: COMMAND_ID,
     name: COMMAND_NAME,
+    description: 'Format backside of rem as keyboard shortcut.',
+
     action: async () => {
       const rem = await plugin.focus.getFocusedRem();
       if (!rem || !rem.backText) {
@@ -99,6 +106,11 @@ export default function FormatKeyboardShortcutCommand(plugin: RNPlugin) {
       const unformattedShortcutRichText = rem.backText;
       const shortcutRichText = await formatKeyboardShortcut(unformattedShortcutRichText, plugin);
       await rem.setBackText(shortcutRichText);
+
+      const shortcutTag = await options.getShortcutTag?.();
+      if (shortcutTag) {
+        rem.addTag(shortcutTag);
+      }
     },
   };
 }
