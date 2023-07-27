@@ -1,4 +1,6 @@
+import { usePlugin, useRunAsync } from '@remnote/plugin-sdk';
 import { useMemo } from 'react';
+import { isSandboxed } from '../../util/plugin_util';
 
 enum CSSSelectors {
   General = ':root body',
@@ -100,6 +102,7 @@ function RemNoteCSSProps() {
   // );
 
   return (
+    // TODO: Filter, structure and sort alphabetically
     <>
       <h2>CSS Custom Properties</h2>
       <h3>Rules with CSS Props</h3>
@@ -116,7 +119,6 @@ function RemNoteCSSProps() {
           </li>
         ))}
       </ul> */}
-
       {
         <ul className="p-0">
           {lightColors.map((cssVariable) => (
@@ -134,10 +136,23 @@ function CSSProp(props: { prop: string; value: string }) {
   // TODO: Click to copy value
   // TODO: Special display for colors/sizes
   // Q: how to decide for var() props?
+  const plugin = usePlugin();
+  const platform = useRunAsync(plugin.app.getPlatform, []);
+
+  function copyValue() {
+    if (isSandboxed() || platform !== 'app') {
+      // TODO: Allow copy in sandbox
+      console.log('Cannot copy value in sandbox');
+      return;
+    }
+
+    navigator.clipboard.writeText(props.value);
+  }
+
   return (
     <span
       className="cursor-pointer hover:rn-clr-content-secondary font-mono text-xs"
-      onClick={() => navigator.clipboard.writeText(props.value)}
+      onClick={copyValue}
     >
       {props.prop}: <CSSValue value={props.value} />
     </span>

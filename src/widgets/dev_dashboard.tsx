@@ -7,6 +7,7 @@ export const DevDashboard = () => {
 
   return (
     <>
+      {/* TODO: Add more API commands */}
       <APINamespace name="app">
         <APIMethod method="getOperatingSystem" />
         <APIMethod method="getPlatform" />
@@ -18,7 +19,6 @@ export const DevDashboard = () => {
         <APIMethod method="getFocusedEditorText" />
         <APIMethod method="getSelection" />
       </APINamespace>
-
       <RemNoteCSSProps />
     </>
   );

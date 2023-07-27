@@ -2,9 +2,30 @@ import { declareIndexPlugin, ReactRNPlugin, WidgetLocation } from '@remnote/plug
 import '../style.css';
 import '../App.css';
 import { writeFileSync } from 'fs';
+import { isDevMode, isSandboxed } from '../util/plugin_util';
 
 async function onActivate(plugin: ReactRNPlugin) {
-  // A command that inserts text into the editor if focused.
+  if (isDevMode()) {
+    // Chrome console formatting
+    console.log(
+      '%cPlugin hannes-remnote-toolbox running in dev mode.',
+      'color: #ff0000; font-weight: bold;'
+    );
+  }
+
+  const os = await plugin.app.getOperatingSystem();
+  const platform = await plugin.app.getPlatform();
+
+  if (
+    !['windows', 'linux', 'macos'].includes(os) ||
+    platform === 'web' ||
+    (!isDevMode() && isSandboxed())
+  ) {
+    plugin.app.toast(
+      "Hannes' RemNote Toolbox needs to run in native mode on the Desktop App to enable all functions."
+    );
+  }
+
   await plugin.app.registerCommand({
     id: 'editor-command',
     name: 'Write File',
@@ -14,17 +35,7 @@ async function onActivate(plugin: ReactRNPlugin) {
     },
   });
 
-  await plugin.app.registerCommand({
-    id: 'editor-command3',
-    name: 'Write File',
-    action: async () => {
-      // await writeFileSync('/Users/hannesfrank/fromRemNote', "Hello from remnote");
-      plugin.editor.insertPlainText('Hello World!');
-    },
-  });
-
   await plugin.app.registerWidget('dev_dashboard', WidgetLocation.Pane, {});
-
 
   await plugin.app.registerCommand({
     id: 'toggle-dev-pane',
@@ -33,6 +44,7 @@ async function onActivate(plugin: ReactRNPlugin) {
       plugin.window.openWidgetInPane('dev_dashboard');
     },
   });
+  // XXX: Not sure if nicer as floating window, but I cannot register a widget in multiple locations unfortunately.
   // await plugin.app.registerCommand({
   //   id: 'toggle-dev-pane',
   //   name: 'Show Dev Dashboard (Floating)',
