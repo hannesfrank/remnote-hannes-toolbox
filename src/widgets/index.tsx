@@ -76,6 +76,8 @@ async function onActivate(plugin: ReactRNPlugin) {
   if (isDevMode() && RN_PLUGIN_TEST_MODE.has(FormatKeyboardShortcutCommandId)) {
     await testFormatKeyboardShortcut(plugin);
   }
+
+  plugin.app.stealKeys(['opt+v']);
 }
 
 async function onDeactivate(_: ReactRNPlugin) {}

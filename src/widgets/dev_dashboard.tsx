@@ -1,5 +1,6 @@
-import { usePlugin, renderWidget, useTracker, RNPlugin, Rem } from '@remnote/plugin-sdk';
+import { AppEvents, RNPlugin, Rem, renderWidget, usePlugin, useTracker } from '@remnote/plugin-sdk';
 import { ReactNode, createContext, useContext } from 'react';
+import { EventViewer } from '../components/dev/EventViewer';
 import RemNoteCSSProps from '../components/dev/RemNoteCSSProps';
 
 export const DevDashboard = () => {
@@ -19,6 +20,8 @@ export const DevDashboard = () => {
         <APIMethod method="getFocusedEditorText" />
         <APIMethod method="getSelection" />
       </APINamespace>
+      <h2>Events</h2>
+      <EventViewer event={AppEvents.StealKeyEvent} />
       <RemNoteCSSProps />
     </>
   );
