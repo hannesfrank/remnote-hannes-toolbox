@@ -35,6 +35,7 @@ Format the back side of a rem to match the
 - richtext.split has wrong doc comment
 - richtext.split(..., '+') fails because `/+/` is not a valid regex
 - richtext.split does not return a RichTextInterface, but RichTextInterface[]
+- Confusing: Looks like `rem.getEnablePractice()` is always `true` and `rem.getPracticeDirection()` is always `forward` for plain rem.
 
 Unclear:
 

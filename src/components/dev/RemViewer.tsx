@@ -7,7 +7,7 @@ import {
   useTracker,
 } from '@remnote/plugin-sdk';
 import { H2, H3 } from '../typography';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { formatValue } from '../../util/dev_util';
 
@@ -168,7 +168,7 @@ export function RemViewer(props: { remId: RemId; compact?: boolean }) {
         )}
         {remToInspect && (
           <>
-            <div className="mb-2 font-semibold">Fields</div>
+            <H3>Fields</H3>
             {/* Table with two columns: fieldname, value. */}
             <table className="table-auto table">
               <tbody>
@@ -183,6 +183,41 @@ export function RemViewer(props: { remId: RemId; compact?: boolean }) {
                 <FieldRow field="backText" value={remToInspect.backText} />
               </tbody>
             </table>
+
+            <H3>Getters</H3>
+            {/* Table with two columns: fieldname, value. */}
+            <table className="table-auto table">
+              <tbody>
+                <GetterRow method="positionAmongstSiblings" rem={remToInspect} />
+                <GetterRow method="getLastPracticed" rem={remToInspect} />
+                <GetterRow method="getLastTimeMovedTo" rem={remToInspect} />
+                <GetterRow method="getSchemaVersion" rem={remToInspect} />
+                <GetterRow method="embeddedQueueViewMode" rem={remToInspect} />
+                {/* <GetterRow method="isCollapsed" rem={remToInspect} /> */}
+                <GetterRow method="getPortalType" rem={remToInspect} />
+                <GetterRow method="getPortalDirectlyIncludedRem" rem={remToInspect} />
+                <GetterRow method="getType" rem={remToInspect} />
+                <GetterRow method="getTagRems" rem={remToInspect} />
+
+                <GetterRow method="getEnablePractice" rem={remToInspect} />
+                <GetterRow method="getPracticeDirection" rem={remToInspect} />
+                <GetterRow method="isDocument" rem={remToInspect} />
+                <GetterRow method="isListItem" rem={remToInspect} />
+                <GetterRow method="isCardItem" rem={remToInspect} />
+                <GetterRow method="isQuote" rem={remToInspect} />
+                <GetterRow method="isCode" rem={remToInspect} />
+                <GetterRow method="isTodo" rem={remToInspect} />
+                <GetterRow method="getTodoStatus" rem={remToInspect} />
+                <GetterRow method="getFontSize" rem={remToInspect} />
+                <GetterRow method="getHighlightColor" rem={remToInspect} />
+                <GetterRow method="isSlot" rem={remToInspect} />
+                <GetterRow method="isPowerup" rem={remToInspect} />
+                <GetterRow method="isPowerupEnum" rem={remToInspect} />
+                <GetterRow method="isPowerupPropertyListItem" rem={remToInspect} />
+                <GetterRow method="isPowerupSlot" rem={remToInspect} />
+                <GetterRow method="isPowerupProperty" rem={remToInspect} />
+              </tbody>
+            </table>
           </>
         )}
       </div>
@@ -193,8 +228,44 @@ export function RemViewer(props: { remId: RemId; compact?: boolean }) {
 const FieldRow = (props: { field: string; value: unknown }) => {
   return (
     <tr className="font-mono text-sm">
-      <td className="font-semibold pr-2">{props.field}</td>
+      <td className="pr-2">{props.field}</td>
       <td>{formatValue(props.value)}</td>
+    </tr>
+  );
+};
+
+// TODO: Add docs link and show possible values in case of enum. Maybe reuse component.
+const GetterRow = (props: { method: string; rem: Rem }) => {
+  // This updates only on rem change, but at least we can distinguish
+  // undefined values from tracker not returning yet.
+  // Probably does not matter so I just use useTracker.
+  //   const [value, setValue] = useState<unknown>();
+  //   const [resolved, setResolved] = useState<boolean>(false);
+
+  //   useEffect(() => {
+  //     async function getValue() {
+  //       const method = props.rem[props.method];
+  //       if (method) {
+  //         const value = await props.rem[props.method]();
+  //         setValue(value);
+  //         setResolved(true);
+  //       }
+  //     }
+  //     getValue();
+  //   }, [props.rem._id]);
+
+  const value = useTracker(() => {
+    return props.rem[props.method]();
+    // return props.rem.getTagRems();
+  }, [props.rem._id]);
+
+  // NVM, this is not reactive either
+
+  return (
+    <tr className="font-mono text-sm">
+      <td className="pr-2">{props.method}()</td>
+
+      <td>{formatValue(value)}</td>
     </tr>
   );
 };
