@@ -1,6 +1,10 @@
 module.exports = {
   content: ['./src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
+    // Don't define any new colors.
+    // We get the color definition from RemNote and RemNote's gray-100 (almost black)
+    // would clash with the native Tailwind gray-100 (almost white).
+    colors: {},
     gridTemplateColumns: {
       'auto-fill-6': 'repeat(auto-fill, minmax(24px, 1fr))',
       'auto-fill-12': 'repeat(auto-fill, minmax(48px, 1fr))',
