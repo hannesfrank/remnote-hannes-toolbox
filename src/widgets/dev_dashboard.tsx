@@ -21,7 +21,7 @@ export const DevDashboard = () => {
         <APIMethod method="getSelection" />
       </APINamespace>
       <h2>Events</h2>
-      <EventViewer event={AppEvents.StealKeyEvent} />
+      <EventViewer event={AppEvents.StealKeyEvent} enabled />
       <RemNoteCSSProps />
     </>
   );

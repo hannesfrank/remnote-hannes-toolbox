@@ -8,11 +8,11 @@ interface EventLogEntry {
   args: any;
 }
 
-export function EventViewer(props: { event: AppEvent }) {
+export function EventViewer(props: { event: AppEvent; enabled: boolean }) {
   const plugin = usePlugin();
   const [events, setEvents] = useState<EventLogEntry[]>([]);
   const [showAll, setShowAll] = useState(false);
-  const [enabled, setEnabled] = useState(false);
+  const [enabled, setEnabled] = useState(props.enabled);
 
   // app.stealKeys uses plugin id as listener key
   useAPIEventListener(props.event, plugin.id, (args) => {
@@ -29,9 +29,20 @@ export function EventViewer(props: { event: AppEvent }) {
 
   return (
     <>
-      <h3>
-        {props.event}
-        <Button onClick={() => setEvents([])}>Clear</Button>
+      <h3 className="flex gap-2 items-center">
+        {enabled ? (
+          <Button className="!py-1 !px-2" onClick={() => setEnabled(false)}>
+            ⏸️
+          </Button>
+        ) : (
+          <Button className="!py-1 !px-2" onClick={() => setEnabled(true)}>
+            ▶️
+          </Button>
+        )}
+        <span>{props.event}</span>
+        <Button className="!py-1 !px-2" onClick={() => setEvents([])}>
+          Clear Button
+        </Button>
       </h3>
       {enabled && (
         <>
