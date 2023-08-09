@@ -1,11 +1,27 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
+import clsx from 'clsx';
+
+export interface ButtonProps extends React.ComponentPropsWithoutRef<'button'> {}
 
 // TODO: Button kinds
 // TODO: Package other RemNote core components
-function Button() {
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(() => {
   return (
-    <button className="rn-button button box-border inline-flex select-none flex-row items-center justify-center text-center cursor-pointer relative transition-all rounded-md rn-button--Outline py-1.5 px-3 h-8 rn-text-label-medium hover:bg-gray-10 rn-clr-background-primary text-gray-100 border border-solid border-gray-15"></button>
+    <button
+      className={clsx(
+        'rn-button button box-border',
+        'rn-button--Outline',
+        'rn-text-label-medium',
+        'inline-flex flex-row items-center justify-center',
+        'text-center select-none cursor-pointer',
+        'relative transition-all',
+        'py-1.5 px-3 h-8',
+        'hover:bg-gray-10 rn-clr-background-primary text-gray-100',
+        'rounded-md border border-solid border-gray-15'
+      )}
+    ></button>
   );
-}
+});
+Button.displayName = 'Button';
 
 export default Button;
