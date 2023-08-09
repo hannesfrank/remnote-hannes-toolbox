@@ -29,7 +29,7 @@ export function EventViewer(props: { event: AppEvent; enabled: boolean }) {
 
   return (
     <>
-      <h3 className="flex gap-2 items-center">
+      <div className="flex gap-2 items-center">
         {enabled ? (
           <Button className="!py-1 !px-2" onClick={() => setEnabled(false)}>
             ⏸️
@@ -39,11 +39,11 @@ export function EventViewer(props: { event: AppEvent; enabled: boolean }) {
             ▶️
           </Button>
         )}
-        <span>{props.event}</span>
+        <span className="font-mono text-sm">{props.event}</span>
         <Button className="!py-1 !px-2" onClick={() => setEvents([])}>
           Clear Button
         </Button>
-      </h3>
+      </div>
       {enabled && (
         <>
           {events.length > 20 && !showAll && (

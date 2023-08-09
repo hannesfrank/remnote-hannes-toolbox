@@ -1,6 +1,7 @@
 import { usePlugin, useRunAsync } from '@remnote/plugin-sdk';
 import { useMemo } from 'react';
 import { isSandboxed } from '../../util/plugin_util';
+import { H2, H3 } from '../typography';
 
 enum CSSSelectors {
   General = ':root body',
@@ -104,14 +105,14 @@ function RemNoteCSSProps() {
   return (
     // TODO: Filter, structure and sort alphabetically
     <>
-      <h2>CSS Custom Properties</h2>
-      <h3>Rules with CSS Props</h3>
+      <H2>CSS Custom Properties</H2>
+      <H3>Rules with CSS Props</H3>
       {/* <ul>
         {[...selectorsWithProps].map((cssRule) => (
           <li key={cssRule.cssText}>{cssRule.cssText}</li>
         ))}
       </ul> */}
-      <h3>RemNote</h3>
+      <H3>RemNote</H3>
       {/* <ul>
         {rnCSSVariables.map((cssVariable) => (
           <li key={cssVariable.prop}>

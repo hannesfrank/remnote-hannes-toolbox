@@ -2,12 +2,16 @@ import { AppEvents, RNPlugin, Rem, renderWidget, usePlugin, useTracker } from '@
 import { ReactNode, createContext, useContext } from 'react';
 import { EventViewer } from '../components/dev/EventViewer';
 import RemNoteCSSProps from '../components/dev/RemNoteCSSProps';
+import '../style.css';
+import { H1, H2, H3 } from '../components/typography';
 
 export const DevDashboard = () => {
   const plugin = usePlugin();
 
   return (
-    <>
+    <div className="mx-2">
+      <H1 className="!mt-0">RemNote API Dashbard</H1>
+      <H2>Namespaces</H2>
       {/* TODO: Add more API commands */}
       <APINamespace name="app">
         <APIMethod method="getOperatingSystem" />
@@ -20,7 +24,7 @@ export const DevDashboard = () => {
         <APIMethod method="getFocusedEditorText" />
         <APIMethod method="getSelection" />
       </APINamespace>
-      <h2>Events</h2>
+      <H2>Events</H2>
       <div className="columns-[180px] font-mono text-xs w-full">
         {/* TODO: Support start/stop listening to other events here.
                 Do I need to add an input for arbitrary listener keys or can I listen to everything?
@@ -36,14 +40,14 @@ export const DevDashboard = () => {
       </div>
       <EventViewer event={AppEvents.StealKeyEvent} enabled />
       <RemNoteCSSProps />
-    </>
+    </div>
   );
 };
 
 const APINamespace = ({ name, children }: { name: keyof RNPlugin; children: ReactNode }) => (
   <APINamespaceContext.Provider value={name}>
-    <div className="m-2">
-      <h2 className="text-lg mb-2 font-mono font-bold">{name}</h2>
+    <div className="my-2">
+      <H3 className="font-mono">{name}</H3>
       {children}
     </div>
   </APINamespaceContext.Provider>
@@ -64,7 +68,7 @@ const APIMethod = (
   const methodResult = useTracker(props.value || defaultValueFunc);
 
   return (
-    <div className="my-1">
+    <div>
       <span className="text-sm font-normal font-mono">
         <DocLink namespace={namespace} method={props.method}>
           {props.method}
