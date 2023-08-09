@@ -21,6 +21,19 @@ export const DevDashboard = () => {
         <APIMethod method="getSelection" />
       </APINamespace>
       <h2>Events</h2>
+      <div className="columns-[180px] font-mono text-xs w-full">
+        {/* TODO: Support start/stop listening to other events here.
+                Do I need to add an input for arbitrary listener keys or can I listen to everything?
+          */}
+        {Object.keys(AppEvents)
+          .filter((event) => !['onActivate', 'onDeactivate'].includes(event))
+          .sort()
+          .map((event) => (
+            <div className="overflow-ellipsis overflow-hidden whitespace-nowrap" key={event}>
+              {event}
+            </div>
+          ))}
+      </div>
       <EventViewer event={AppEvents.StealKeyEvent} enabled />
       <RemNoteCSSProps />
     </>
