@@ -4,6 +4,8 @@ import { EventViewer } from '../components/dev/EventViewer';
 import RemNoteCSSProps from '../components/dev/RemNoteCSSProps';
 import '../style.css';
 import { H1, H2, H3 } from '../components/typography';
+import { RemViewer } from '../components/dev/RemViewer';
+import { formatValue } from '../util/dev_util';
 
 export const DevDashboard = () => {
   const plugin = usePlugin();
@@ -24,6 +26,8 @@ export const DevDashboard = () => {
         <APIMethod method="getFocusedEditorText" />
         <APIMethod method="getSelection" />
       </APINamespace>
+      <H2>Inspect Rem</H2>
+      <RemViewer remId={''} />
       <H2>Events</H2>
       <div className="columns-[180px] font-mono text-xs w-full">
         {/* TODO: Support start/stop listening to other events here.
@@ -75,7 +79,7 @@ const APIMethod = (
         </DocLink>
         :
       </span>{' '}
-      <span className="text-xs">{formatResult(methodResult)}</span>
+      <span className="text-xs">{formatValue(methodResult)}</span>
     </div>
   );
 };
@@ -92,30 +96,5 @@ const DocLink = (props: { namespace: string; method: string; children: ReactNode
     </a>
   );
 };
-
-function isRem(obj: any) {
-  // For some reason initially `instanceof Rem` was always false.
-  // obj?.__proto__?.constructor?.name === 'Rem'
-  // return obj && obj.__proto__ === Rem.prototype;
-  return obj instanceof Rem;
-}
-
-function formatResult(result: unknown) {
-  if (typeof result === 'string') {
-    return result;
-  }
-  if (typeof result === 'undefined') {
-    return <em>undefined</em>;
-  }
-  if (isRem(result)) {
-    return `Rem(${JSON.stringify({
-      // @ts-ignore
-      id: result?._id,
-      // @ts-ignore
-      text: result?.text,
-    })})`;
-  }
-  return JSON.stringify(result);
-}
 
 renderWidget(DevDashboard);
