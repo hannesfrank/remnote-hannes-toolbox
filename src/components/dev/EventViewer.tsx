@@ -1,6 +1,6 @@
 import { AppEvent, useAPIEventListener, usePlugin } from '@remnote/plugin-sdk';
-import { timeStamp } from 'console';
 import { useState } from 'react';
+import Button from '../builtin/button';
 
 interface EventLogEntry {
   eventType: AppEvent;
@@ -30,13 +30,8 @@ export function EventViewer(props: { event: AppEvent }) {
   return (
     <>
       <h3>
-        {props.event}{' '}
-        <button
-          className="rn-button button box-border inline-flex select-none flex-row items-center justify-center text-center cursor-pointer relative transition-all rounded-md rn-button--Outline py-1.5 px-3 h-8 rn-text-label-medium hover:bg-gray-10 rn-clr-background-primary text-gray-100 border border-solid border-gray-15 mt-2"
-          onClick={() => setEvents([])}
-        >
-          Clear
-        </button>
+        {props.event}
+        <Button onClick={() => setEvents([])}>Clear</Button>
       </h3>
       {enabled && (
         <>
