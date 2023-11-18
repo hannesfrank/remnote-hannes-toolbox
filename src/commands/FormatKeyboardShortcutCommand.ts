@@ -6,7 +6,7 @@ import {
   RemId,
   RichTextInterface,
 } from '@remnote/plugin-sdk';
-import _ from 'lodash';
+import _ from 'underscore';
 import { RN_PLUGIN_TEST_MODE } from '../util/plugin_util';
 
 export const COMMAND_ID = 'format-keyboard-shortcut';
