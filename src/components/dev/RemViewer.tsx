@@ -168,6 +168,7 @@ export function RemViewer(props: { remId: RemId; compact?: boolean }) {
         )}
         {remToInspect && (
           <>
+            <button onClick={() => void remToInspect.openRemAsPage()}>Open</button>
             <H3>Fields</H3>
             {/* Table with two columns: fieldname, value. */}
             <table className="table-auto table">
