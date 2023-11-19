@@ -17,7 +17,19 @@ const fastRefresh = isDevelopment ? new ReactRefreshWebpackPlugin() : null;
 
 const SANDBOX_SUFFIX = '-sandbox';
 
+// #region Customisation from default plugin build process
+const PLUGIN_BULID_TARGETS = {
+  // The default target. Used if the `target` option is omitted.
+  WEB: 'web',
+  // Targeting "node" (and running native) lets plugins use
+  // builtin node modules like `fs` when running in electron.
+  NODE: 'node',
+};
+const PLUGIN_BUILD_TARGET = PLUGIN_BULID_TARGETS.WEB;
+// #endregion
+
 const config = {
+  target: PLUGIN_BUILD_TARGET,
   mode: isProd ? 'production' : 'development',
   entry: glob.sync('./src/widgets/**.tsx').reduce(function (obj, el) {
     obj[path.parse(el).name] = el;
@@ -54,7 +66,6 @@ const config = {
       },
     ],
   },
-  target: 'node',
   plugins: [
     isDevelopment
       ? undefined

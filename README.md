@@ -10,6 +10,15 @@ Format the back side of a rem to match the
 
 ## Notes
 
+### Building the plugin
+
+Some features use builtin node modules like `fs` that are available in the electron app.
+To allow access to those the plugin must be built with `target: "node"` set in `webpack.config.js`
+and run in native mode.
+
+As live reloading in native mode is not supported (you need to Ctrl + R the whole app) while
+development it is still `target: "web"`.
+
 ### SDK enhancements
 
 - Permissions do not autoupdate when editing the manifest, need to reinstall
