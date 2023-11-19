@@ -25,7 +25,7 @@ const PLUGIN_BULID_TARGETS = {
   // builtin node modules like `fs` when running in electron.
   NODE: 'node',
 };
-const PLUGIN_BUILD_TARGET = PLUGIN_BULID_TARGETS.WEB;
+const PLUGIN_BUILD_TARGET = process.env.PLUGIN_BUILD_TARGET || PLUGIN_BULID_TARGETS.WEB;
 // #endregion
 
 const config = {
