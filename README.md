@@ -19,6 +19,15 @@ and run in native mode.
 As live reloading in native mode is not supported (you need to Ctrl + R the whole app) while
 development it is still `target: "web"`.
 
+Tasks:
+
+- [ ] Automate command composition.
+  - I wnat to move commands and and widgets to their own plugin when they are stable.
+  - To avoid having to touch `index.html` each time it should load them automatically.
+  - [ ] Add a node script that iterates `/commands` and generates a `commands.tsx` file that registers each command.
+  - [ ] Include as built step in `package.json`.
+- [ ] Figure out how to deploy a new plugin version via CLI.
+
 ### SDK enhancements
 
 - Permissions do not autoupdate when editing the manifest, need to reinstall
