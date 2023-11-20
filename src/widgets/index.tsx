@@ -59,10 +59,9 @@ async function onActivate(plugin: ReactRNPlugin) {
   //   },
   // });
 
-  // Register a sidebar widget.
-  // await plugin.app.registerWidget('sample_widget', WidgetLocation.RightSidebar, {
-  //   dimensions: { height: 'auto', width: '100%' },
-  // });
+  await plugin.app.registerWidget('powerup_list', WidgetLocation.RightSidebar, {
+    dimensions: { height: 'auto', width: '100%' },
+  });
 
   // Commands
   await plugin.app.registerCommand(

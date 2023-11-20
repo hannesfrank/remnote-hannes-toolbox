@@ -18,3 +18,16 @@ export const H3 = forwardRef<HTMLHeadingElement, React.ComponentPropsWithoutRef<
   return <h3 {...headingProps} className={clsx('text-lg mt-2 mb-0.5 font-semibold', className)} />;
 });
 H3.displayName = 'H3';
+
+export const Small = forwardRef<HTMLHeadingElement, React.ComponentPropsWithoutRef<'span'>>(
+  (props) => {
+    const { className, ...restProps } = props;
+    return (
+      <span
+        {...restProps}
+        className={clsx('font-normal text-sm leading-5 transition', className)}
+      />
+    );
+  }
+);
+Small.displayName = 'Small';
