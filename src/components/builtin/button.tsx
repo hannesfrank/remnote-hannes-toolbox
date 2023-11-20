@@ -5,10 +5,11 @@ export interface ButtonProps extends React.ComponentPropsWithoutRef<'button'> {}
 
 // TODO: Button kinds
 // TODO: Package other RemNote core components
-const Button = forwardRef<HTMLButtonElement, ButtonProps>((props) => {
-  const { children, className, ...buttonProps } = props;
+const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
+  const { children, className, disabled, ...buttonProps } = props;
   return (
     <button
+      ref={ref}
       {...buttonProps}
       className={clsx(
         'rn-button button box-border',
