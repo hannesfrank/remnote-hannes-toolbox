@@ -1,31 +1,44 @@
-import { BuiltInPowerupCodes, renderWidget, usePlugin } from '@remnote/plugin-sdk';
+import { BuiltInPowerupCodes, renderWidget, usePlugin, useTracker } from '@remnote/plugin-sdk';
+import Button from '../components/builtin/button';
 import { H1, Small } from '../components/typography';
 import '../style.css';
 
 export const PowerupList = () => {
   const plugin = usePlugin();
 
-  console.log(BuiltInPowerupCodes);
-  console.log(Object.keys(BuiltInPowerupCodes));
-  console.log(Object.values(BuiltInPowerupCodes));
-  console.log(Object.entries(BuiltInPowerupCodes));
   const powerups = Object.entries(BuiltInPowerupCodes);
-
   return (
     <div className="mx-2">
       <H1 className="!mt-0">Builtin Powerups</H1>
       {powerups.map((powerup) => (
-        <PowerupRow powerup={powerup[0]} powerupShortcode={powerup[1]} />
+        <PowerupRow key={powerup[1]} powerup={powerup[0]} powerupCode={powerup[1]} />
       ))}
       <H1>Custom Powerups</H1>
     </div>
   );
 };
 
-const PowerupRow = (props: { powerup: string; powerupShortcode: string }) => (
-  <div key={props.powerupShortcode}>
-    {props.powerup} <Small className="rn-clr-content-tertiary">{props.powerupShortcode}</Small>
-  </div>
-);
+const PowerupRow = (props: { powerup: string; powerupCode: string }) => {
+  const powerup = useTracker(
+    async (plugin) => await plugin.powerup.getPowerupByCode(props.powerupCode),
+    [props.powerupCode]
+  );
+  return (
+    <div className="flex gap-2 items-center my-1">
+      <span className="font-semibold">{props.powerup}</span>
+      <Small className="rn-clr-content-tertiary">{props.powerupCode}</Small>
+      <Button
+        className="ml-auto"
+        onClick={() => {
+          console.log('opening', powerup);
+          void powerup?.openRemAsPage();
+        }}
+        disabled={!powerup}
+      >
+        Open
+      </Button>
+    </div>
+  );
+};
 
 renderWidget(PowerupList);
