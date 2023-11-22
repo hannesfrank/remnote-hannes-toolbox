@@ -3,6 +3,27 @@ import Button from '../components/builtin/button';
 import { H1, Small } from '../components/typography';
 import '../style.css';
 
+// * Features
+// Get builtin powerups of the current KB
+// Cache rem for each powerup in the KB
+//    - Isolated cache for all KBs
+// Find custom powerups
+//    - native: use window method
+//    - sandboxed: Iterate over all rem
+
+// * UI
+// For each powerup
+//    - Before caching: Button to start loading
+//    - ---
+//    - Powerup Name
+//    - Short description of what the powerup is for
+//    - List slots for powerup
+//    - Open Powerup
+//    - Number of uses for powerup
+//    - ? Delete custom Powerup
+//    - ---
+//    - Button at the bottom to find custom powerups
+
 export const PowerupList = () => {
   const plugin = usePlugin();
 
