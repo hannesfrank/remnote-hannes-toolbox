@@ -7,8 +7,9 @@ export const PowerupList = () => {
   const plugin = usePlugin();
 
   const powerups = Object.entries(BuiltInPowerupCodes);
+
   return (
-    <div className="mx-2">
+    <div className="h-full overflow-auto p-2">
       <H1 className="!mt-0">Builtin Powerups</H1>
       {powerups.map((powerup) => (
         <PowerupRow key={powerup[1]} powerup={powerup[0]} powerupCode={powerup[1]} />
