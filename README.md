@@ -78,6 +78,7 @@ Unclear:
 
 - You need to restart `npm run dev` after adding/removing a widget.
 - `plugin.app.stealKeys` uses `plugin.id` as listener key. To listen to keys, use `useEventListener(AppEvents.StealKeys, plugin.id, ...)`.
+- Widget icons need a URL. But you can use a data url, e.g. from [iconify.design](https://iconify.design/)
 
 ### Roadmap
 
