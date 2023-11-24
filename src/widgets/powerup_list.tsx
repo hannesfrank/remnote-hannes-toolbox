@@ -121,8 +121,8 @@ const CustomPowerupList = () => {
   const findCustomPowerups = async () => {
     setCustomPowerupsLoading(true);
 
-    const allRem = await plugin.rem.getAll();
-
+    console.time('Finding Powerups');
+    console.timeLog('Finding Powerups', 'Fetching Builtin Powerups...');
     const powerupCodes = Object.values(BuiltInPowerupCodes);
     const powerupRemIds = await Promise.all(
       powerupCodes.map(async (code) => {
@@ -130,20 +130,28 @@ const CustomPowerupList = () => {
         return rem?._id;
       })
     );
-    // TODO: Compare runtime, memory of reducing (sequential query) with map + index (theoretically parallel)
-    // const isPowerup = await Promise.all(allRem.map(r => r.isPowerup()));
+    console.timeLog('Finding Powerups', 'Fetching Rem...');
+    const allRem = await plugin.rem.getAll();
+    console.timeLog('Finding Powerups', 'Checking Rem for Powerups...');
+    const isPowerup = await Promise.all(allRem.map((r) => r.isPowerup()));
+    console.timeLog('Finding Powerups', 'Filtering Powerups...');
+    const customPowerups = allRem.filter(
+      (rem, idx) => isPowerup[idx] && !powerupRemIds.includes(rem._id)
+    );
 
-    console.time('Powerup Checking');
-    const customPowerups = await allRem.reduce(async (customPowerups, rem) => {
-      const isPowerup = await rem.isPowerup();
-      if (!isPowerup) return customPowerups;
+    // Compare runtime, memory of reducing (sequential query) with map + index (theoretically parallel)
+    // Result: They take the same time and roughly the same memory. Mapping is easier to read though :)
+    // const customPowerups = await allRem.reduce(async (customPowerups, rem) => {
+    //   const isPowerup = await rem.isPowerup();
+    //   if (!isPowerup) return customPowerups;
 
-      const isBuiltinPowerup = powerupRemIds.includes(rem._id);
-      if (isBuiltinPowerup) return customPowerups;
+    //   const isBuiltinPowerup = powerupRemIds.includes(rem._id);
+    //   if (isBuiltinPowerup) return customPowerups;
 
-      return (await customPowerups).concat(rem);
-    }, Promise.resolve([] as Rem[]));
-    console.timeEnd('Powerup Checking');
+    //   return (await customPowerups).concat(rem);
+    // }, Promise.resolve([] as Rem[]));
+
+    console.timeEnd('Finding Powerups');
 
     await plugin.storage.setLocal(
       CUSTOM_POWERUP_REM_IDS,
