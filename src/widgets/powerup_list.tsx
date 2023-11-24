@@ -1,8 +1,18 @@
-import { BuiltInPowerupCodes, Rem, renderWidget, usePlugin, useTracker } from '@remnote/plugin-sdk';
+import {
+  BuiltInPowerupCodes,
+  Rem,
+  RemId,
+  renderWidget,
+  usePlugin,
+  useTracker,
+} from '@remnote/plugin-sdk';
 import Button from '../components/builtin/button';
 import { H1, Small } from '../components/typography';
 import '../style.css';
 import { useState } from 'react';
+import { pluginError, pluginLog, pluginWarn } from '../util/dev_util';
+
+const CUSTOM_POWERUP_REM_IDS = 'powerup-list.powerup-rem-ids';
 
 // * Features
 // Get builtin powerups of the current KB
@@ -25,14 +35,83 @@ import { useState } from 'react';
 //    - ---
 //    - Button at the bottom to find custom powerups
 
-export const PowerupList = () => {
+export const PowerupList = () => (
+  <div className="h-full overflow-auto p-2">
+    <BuiltinPowerupList />
+    <CustomPowerupList />
+  </div>
+);
+
+const BuiltinPowerupList = () => {
+  const plugin = usePlugin();
+  const powerups = Object.entries(BuiltInPowerupCodes);
+
+  return (
+    <>
+      <H1 className="!mt-0">Builtin Powerups</H1>
+      {powerups.map((powerup) => (
+        <BuiltinPowerupRow key={powerup[1]} powerupName={powerup[0]} powerupCode={powerup[1]} />
+      ))}
+    </>
+  );
+};
+
+const BuiltinPowerupRow = (props: { powerupName: string; powerupCode: string }) => {
+  const powerup = useTracker(
+    async (plugin) => await plugin.powerup.getPowerupByCode(props.powerupCode),
+    [props.powerupCode]
+  );
+  return (
+    <div className="flex gap-2 items-center my-1">
+      <span className="font-semibold">{props.powerupName}</span>
+      <Small className="rn-clr-content-tertiary">{props.powerupCode}</Small>
+      <Button
+        className="ml-auto"
+        onClick={() => {
+          void powerup?.openRemAsPage();
+        }}
+        disabled={!powerup}
+      >
+        Open
+      </Button>
+    </div>
+  );
+};
+
+const CustomPowerupList = () => {
   const plugin = usePlugin();
 
+  // !cacheChecked && !loaded: Find rem
+  // cache empty: Find Rem
+  // cacheChecked && !loaded: Cached list and refind button in heading
+  // loaded: Update cache and
+  const [cacheChecked, setCacheChecked] = useState(false);
   const [customPowerupsLoaded, setCustomPowerupsLoaded] = useState(false);
   const [customPowerupsLoading, setCustomPowerupsLoading] = useState(false);
+
   const [customPowerups, setCustomPowerups] = useState<Rem[]>([]);
 
-  const powerups = Object.entries(BuiltInPowerupCodes);
+  const cachedPowerups = useTracker(async (plugin) => {
+    const cachedIds = (await plugin.storage.getLocal(CUSTOM_POWERUP_REM_IDS)) as RemId[];
+    if (!cachedIds) {
+      setCacheChecked(true);
+      return undefined;
+    }
+    const powerups = await plugin.rem.findMany(cachedIds);
+    const foundPowerups = powerups?.filter((p) => p);
+    // Assume powerups that were not found are deleted.
+    // Remove them from cache. Refinding fixes anyway.
+    if (foundPowerups) {
+      await plugin.storage.setLocal(
+        CUSTOM_POWERUP_REM_IDS,
+        foundPowerups.map((p) => p._id)
+      );
+    } else {
+      console.warn('Cached powerup list is undefined.');
+    }
+    setCacheChecked(true);
+  });
+
   const findCustomPowerups = async () => {
     setCustomPowerupsLoading(true);
     const allRem = await plugin.rem.getAll();
@@ -62,11 +141,7 @@ export const PowerupList = () => {
   };
 
   return (
-    <div className="h-full overflow-auto p-2">
-      <H1 className="!mt-0">Builtin Powerups</H1>
-      {powerups.map((powerup) => (
-        <BuiltinPowerupRow key={powerup[1]} powerupName={powerup[0]} powerupCode={powerup[1]} />
-      ))}
+    <>
       <H1>Custom Powerups</H1>
       {customPowerupsLoaded ? (
         customPowerups.map((powerup) => <CustomPowerupRow key={powerup._id} remId={powerup._id} />)
@@ -77,24 +152,27 @@ export const PowerupList = () => {
       ) : (
         <Button onClick={findCustomPowerups}>Find Plugin Powerups</Button>
       )}
-    </div>
+    </>
   );
 };
 
-const BuiltinPowerupRow = (props: { powerupName: string; powerupCode: string }) => {
+const CustomPowerupRow = (props: { remId: string }) => {
   const powerup = useTracker(
-    async (plugin) => await plugin.powerup.getPowerupByCode(props.powerupCode),
-    [props.powerupCode]
+    async (plugin) => {
+      const rem = await plugin.rem.findOne(props.remId);
+      const name = await plugin.richText.toString(rem?.text || ['Unknown Powerup']);
+      return { rem, name };
+    },
+    [props.remId]
   );
   return (
     <div className="flex gap-2 items-center my-1">
-      <span className="font-semibold">{props.powerup}</span>
-      <Small className="rn-clr-content-tertiary">{props.powerupCode}</Small>
+      <span className="font-semibold">{powerup?.name}</span>
+      <Small className="rn-clr-content-tertiary">{powerup?.rem?._id}</Small>
       <Button
         className="ml-auto"
         onClick={() => {
-          console.log('opening', powerup);
-          void powerup?.openRemAsPage();
+          void powerup?.rem?.openRemAsPage();
         }}
         disabled={!powerup}
       >
