@@ -10,7 +10,7 @@ import Button from '../components/builtin/button';
 import { H1, Small } from '../components/typography';
 import '../style.css';
 import { useState } from 'react';
-import { pluginError, pluginLog, pluginWarn } from '../util/dev_util';
+import { pluginError, pluginInfo, pluginLog, pluginWarn } from '../util/dev_util';
 
 const CUSTOM_POWERUP_REM_IDS = 'powerup-list.powerup-rem-ids';
 
@@ -81,76 +81,107 @@ const BuiltinPowerupRow = (props: { powerupName: string; powerupCode: string }) 
 const CustomPowerupList = () => {
   const plugin = usePlugin();
 
-  // !cacheChecked && !loaded: Find rem
-  // cache empty: Find Rem
-  // cacheChecked && !loaded: Cached list and refind button in heading
-  // loaded: Update cache and
   const [cacheChecked, setCacheChecked] = useState(false);
   const [customPowerupsLoaded, setCustomPowerupsLoaded] = useState(false);
   const [customPowerupsLoading, setCustomPowerupsLoading] = useState(false);
 
-  const [customPowerups, setCustomPowerups] = useState<Rem[]>([]);
+  const [customPowerups, setCustomPowerups] = useState<Rem[] | undefined>();
 
-  const cachedPowerups = useTracker(async (plugin) => {
+  useTracker(async (plugin) => {
+    if (cacheChecked) {
+      pluginInfo('Reusing cached powerups.');
+      return;
+    }
+
     const cachedIds = (await plugin.storage.getLocal(CUSTOM_POWERUP_REM_IDS)) as RemId[];
     if (!cachedIds) {
       setCacheChecked(true);
-      return undefined;
+      setCustomPowerups(undefined);
+      pluginInfo('No cached powerups yet.');
+      return;
     }
+
     const powerups = await plugin.rem.findMany(cachedIds);
     const foundPowerups = powerups?.filter((p) => p);
     // Assume powerups that were not found are deleted.
-    // Remove them from cache. Refinding fixes anyway.
+    // Remove them from cache.
+    // Refinding fixes in case they are missing for another reason.
     if (foundPowerups) {
       await plugin.storage.setLocal(
         CUSTOM_POWERUP_REM_IDS,
         foundPowerups.map((p) => p._id)
       );
-    } else {
-      console.warn('Cached powerup list is undefined.');
     }
+
     setCacheChecked(true);
+    setCustomPowerups(foundPowerups);
+    pluginInfo('Finish loading powerups from cache.');
   });
 
   const findCustomPowerups = async () => {
     setCustomPowerupsLoading(true);
+
     const allRem = await plugin.rem.getAll();
+
+    const powerupCodes = Object.values(BuiltInPowerupCodes);
     const powerupRemIds = await Promise.all(
-      powerups.map(async ([name, code]) => {
+      powerupCodes.map(async (code) => {
         const rem = await plugin.powerup.getPowerupByCode(code);
         return rem?._id;
       })
     );
+    // TODO: Compare runtime, memory of reducing (sequential query) with map + index (theoretically parallel)
     // const isPowerup = await Promise.all(allRem.map(r => r.isPowerup()));
 
     console.time('Powerup Checking');
     const customPowerups = await allRem.reduce(async (customPowerups, rem) => {
       const isPowerup = await rem.isPowerup();
       if (!isPowerup) return customPowerups;
+
       const isBuiltinPowerup = powerupRemIds.includes(rem._id);
       if (isBuiltinPowerup) return customPowerups;
+
       return (await customPowerups).concat(rem);
     }, Promise.resolve([] as Rem[]));
     console.timeEnd('Powerup Checking');
-    console.log('CUSTOM POWERUPS', customPowerups);
+
+    await plugin.storage.setLocal(
+      CUSTOM_POWERUP_REM_IDS,
+      customPowerups.map((r) => r._id)
+    );
 
     setCustomPowerups(customPowerups);
     setCustomPowerupsLoading(false);
     setCustomPowerupsLoaded(true);
-    // TODO: cache them
   };
 
   return (
     <>
-      <H1>Custom Powerups</H1>
-      {customPowerupsLoaded ? (
-        customPowerups.map((powerup) => <CustomPowerupRow key={powerup._id} remId={powerup._id} />)
-      ) : customPowerupsLoading ? (
+      <H1>
+        Custom Powerups
+        {cacheChecked && customPowerups ? (
+          <Button className="mx-2 align-bottom font-normal" onClick={findCustomPowerups}>
+            Refind
+          </Button>
+        ) : null}
+      </H1>
+
+      {customPowerupsLoading ? (
         <span className="italic">
           Checking your KB for more powerups. This may take a few seconds...
         </span>
+      ) : customPowerups ? (
+        customPowerups.map((powerup) => <CustomPowerupRow key={powerup._id} remId={powerup._id} />)
+      ) : cacheChecked /* && !customPowerups */ ? (
+        <>
+          <div>
+            Your KB was not searched for plugin defined powerups yet. This may take a while
+            depending on your KB size. Afterwards found powerups will be cached.
+          </div>
+          <Button onClick={findCustomPowerups}>Find Plugin Powerups</Button>
+        </>
       ) : (
-        <Button onClick={findCustomPowerups}>Find Plugin Powerups</Button>
+        <span className="italic">Checking Powerup Cache...</span>
       )}
     </>
   );

@@ -34,6 +34,10 @@ export function pluginLog(...message: unknown[]) {
   console.log(...LOG_PREFIX, ...message);
 }
 
+export function pluginInfo(...message: unknown[]) {
+  console.info(...LOG_PREFIX, ...message);
+}
+
 export function pluginWarn(...message: unknown[]) {
   console.warn(...LOG_PREFIX, ...message);
 }
