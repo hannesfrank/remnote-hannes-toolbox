@@ -47,6 +47,7 @@ Tasks:
   - Should provide context depending on when the command was triggered (global, in editor, with selected text, with selected rem), or document pattern for each.
 - Support setting title in plugin panes.
   - How does the plugin store data in the `paneIdToDocumentIdMap`? I know Bijay made this.
+- Given a powerup rem you cannot get its `powerupCode`. E.g. to analyse custom powerups.
 
 #### API Bugs
 
