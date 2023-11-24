@@ -10,7 +10,7 @@ import Button from '../components/builtin/button';
 import { H1, Small } from '../components/typography';
 import '../style.css';
 import { useState } from 'react';
-import { pluginError, pluginInfo, pluginLog, pluginWarn } from '../util/dev_util';
+import { pluginError, pluginLog, pluginWarn } from '../util/dev_util';
 
 const CUSTOM_POWERUP_REM_IDS = 'powerup-list.powerup-rem-ids';
 
@@ -89,7 +89,7 @@ const CustomPowerupList = () => {
 
   useTracker(async (plugin) => {
     if (cacheChecked) {
-      pluginInfo('Reusing cached powerups.');
+      pluginLog('Reusing cached powerups.');
       return;
     }
 
@@ -97,7 +97,7 @@ const CustomPowerupList = () => {
     if (!cachedIds) {
       setCacheChecked(true);
       setCustomPowerups(undefined);
-      pluginInfo('No cached powerups yet.');
+      pluginLog('No cached powerups yet.');
       return;
     }
 
@@ -115,7 +115,7 @@ const CustomPowerupList = () => {
 
     setCacheChecked(true);
     setCustomPowerups(foundPowerups);
-    pluginInfo('Finish loading powerups from cache.');
+    pluginLog('Finish loading powerups from cache.');
   });
 
   const findCustomPowerups = async () => {
