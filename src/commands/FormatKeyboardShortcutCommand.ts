@@ -33,7 +33,7 @@ export async function formatKeyboardShortcut(
   // Where is b?
 
   // Splitting myself...
-  const key_parts = [];
+  const key_parts: RichTextInterface = [];
   for (const part of unformattedShortcutRichText) {
     if (typeof part === 'string') {
       // Using a regex group keeps the separators + and , as items in the string
@@ -46,7 +46,7 @@ export async function formatKeyboardShortcut(
     }
   }
 
-  const parts = [];
+  const parts: RichTextInterface = [];
   let after_comma = false;
   let after_plus = false;
 
