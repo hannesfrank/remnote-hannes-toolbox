@@ -7,9 +7,10 @@
     "check-types": "tsc",
     "dev": "cross-env NODE_ENV=development webpack-dev-server --color --progress --no-open",
     "clean": "shx rm -rf dist",
-    "prebuild": "npx remnote-plugin validate && npm run clean",
+    "prebuild": "npm outdated @remnote/plugin-sdk && npx remnote-plugin validate && npm run clean",
     "build": "cross-env PLUGIN_BUILD_TARGET=node NODE_ENV=production webpack --color --progress",
-    "postbuild": "shx cp README.md dist && cd dist && bestzip ../PluginZip.zip ./*"
+    "postbuild": "shx cp README.md dist && cd dist && bestzip ../PluginZip.zip ./*",
+    "upload": "echo 'TODO'"
   },
   "dependencies": {
     "@remnote/plugin-sdk": "latest",
