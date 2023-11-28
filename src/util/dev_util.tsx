@@ -28,7 +28,7 @@ export function formatValue(value: unknown) {
   return JSON.stringify(value);
 }
 
-const LOG_PREFIX = ['%c' + manifest.id + ':', 'color: rgb(75,115,255); font-weight: bold'];
+const LOG_PREFIX = [`%c${manifest.id}:`, 'color: rgb(75,115,255); font-weight: bold'];
 
 export function pluginLog(...message: unknown[]) {
   console.log(...LOG_PREFIX, ...message);
