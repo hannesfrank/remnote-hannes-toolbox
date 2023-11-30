@@ -8,6 +8,7 @@ import FormatKeyboardShortcutCommand, {
   COMMAND_ID as FormatKeyboardShortcutCommandId,
 } from '../commands/FormatKeyboardShortcutCommand';
 import { REM_IDS } from '../constants/remIds';
+import JoinChildrenCommand from '../commands/JoinChildren';
 
 async function onActivate(plugin: ReactRNPlugin) {
   if (isDevMode()) {
@@ -72,6 +73,8 @@ async function onActivate(plugin: ReactRNPlugin) {
           : null,
     })
   );
+
+  await plugin.app.registerCommand(JoinChildrenCommand(plugin));
 
   if (isDevMode() && RN_PLUGIN_TEST_MODE.has(FormatKeyboardShortcutCommandId)) {
     await testFormatKeyboardShortcut(plugin);
