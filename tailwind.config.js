@@ -16,4 +16,11 @@ module.exports = {
     extend: {},
   },
   plugins: [],
+  corePlugins: {
+    // Need to disable preflight when going native.
+    //
+    // Tried to fix individual issues before, but unfortunately there seem to be too
+    // many issues so I just disable and workaround.
+    preflight: false,
+  },
 };
