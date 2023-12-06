@@ -1,12 +1,49 @@
 # Hannes's RemNote Toolbox
 
-## Commands
+This is a sort of monorepo including my exploration with [RemNote's](https://remnote.com) plugin system.
 
-### Format as Keyboard Shortcut
+The repo includes a variety commands and widgets I use for myself or someone else requested. When they evolve past the prototype status or people find them genuinely useful I consider extracting them to a standalone plugin.
+
+Furthermore this repo includes tools and components to aid the plugin making process.
+
+- An [API Explorer](#in-progress-plugin-api-explorer) to get familiar the SDK.
+- React components mimmicking RemNote's design system.
+- Utility functions (logging, formatting, rem creation, checking plugin environment)
+- Additional components (dialogs)
+
+## Features
+
+### [In Progress] Plugin API Explorer
+
+This pane helps you explore various aspects of the API:
+
+- Live update of return value of API endpoints.
+- `rn-` token overview.
+- Event Viewer
+- More to come...
+
+### [In Progress] Keyboard Shortcut Practice
+
+Learn keyboard shortcuts of your apps.
+
+Provides
+
+- CSS to style keyboard shortcuts in the editor and the queue.
+- Organisational framework (`#Application`, `#Shortcut`).
+- Shortcut recording helper (Command: Format shortcut, Command: Record shortcut).
+- Queue Widget asking you to press the shortcut.
+
+#### Command: Format as Keyboard Shortcut
 
 <!-- TODO: Image -->
 
-Format the back side of a rem to match the
+Format the back side of a rem to match the formatting needed for the shortcut custom CSS.
+
+### Editor Commands
+
+#### Command: Join children/siblings of a rem.
+
+<!-- TODO: Image -->
 
 ## Notes
 
@@ -47,6 +84,7 @@ Tasks:
   - Should provide context depending on when the command was triggered (global, in editor, with selected text, with selected rem), or document pattern for each.
 - Support setting title in plugin panes.
   - How does the plugin store data in the `paneIdToDocumentIdMap`? I know Bijay made this.
+- Given a powerup rem you cannot get its `powerupCode`. E.g. to analyse custom powerups.
 
 #### API Bugs
 
@@ -54,6 +92,9 @@ Tasks:
 - richtext.split(..., '+') fails because `/+/` is not a valid regex
 - richtext.split does not return a RichTextInterface, but RichTextInterface[]
 - Confusing: Looks like `rem.getEnablePractice()` is always `true` and `rem.getPracticeDirection()` is always `forward` for plain rem.
+- `rem.visibleSiblingRem` includes `rem`, but `rem.siblingRem` does not.
+  - Naming inconsistency with `getChildren`.
+- `rem.setParent` does not add the the start of the rem as documented.
 
 Unclear:
 
@@ -78,11 +119,4 @@ Unclear:
 
 - You need to restart `npm run dev` after adding/removing a widget.
 - `plugin.app.stealKeys` uses `plugin.id` as listener key. To listen to keys, use `useEventListener(AppEvents.StealKeys, plugin.id, ...)`.
-
-### Roadmap
-
-### Todo
-
-- Check if in dev mode using URL == localhost
-- If in dev mode, patch some native stuff so I can better run sandboxed with hot reload
-- Check if desktop app,;,:;:,,
+- Widget icons need a URL. But you can use a data url, e.g. from [iconify.design](https://iconify.design/)
