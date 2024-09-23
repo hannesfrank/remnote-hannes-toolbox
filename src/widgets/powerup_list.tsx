@@ -6,7 +6,7 @@ import {
   usePlugin,
   useTracker,
 } from '@remnote/plugin-sdk';
-import Button from '../components/builtin/button';
+import Button from '../components/builtin/Button';
 import { H1, Small } from '../components/typography';
 import '../style.css';
 import { useState } from 'react';

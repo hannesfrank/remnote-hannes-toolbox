@@ -1,6 +1,6 @@
 import { AppEvent, useAPIEventListener, usePlugin } from '@remnote/plugin-sdk';
 import { useState } from 'react';
-import Button from '../builtin/button';
+import Button from '../builtin/Button';
 
 interface EventLogEntry {
   eventType: AppEvent;
