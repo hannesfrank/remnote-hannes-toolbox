@@ -2,7 +2,8 @@
 
 This is a sort of monorepo including my exploration with [RemNote's](https://remnote.com) plugin system.
 
-The repo includes a variety commands and widgets I use for myself or someone else requested. When they evolve past the prototype status or people find them genuinely useful I consider extracting them to a standalone plugin.
+The repo includes a variety commands and widgets I use for myself. Or someone requested them in Discord or the forum and I found them interesting enough to implement.
+<!-- When they evolve past the prototype status or people find them genuinely useful I consider extracting them to a standalone plugin. -->
 
 Furthermore this repo includes tools and components to aid the plugin making process.
 
@@ -59,7 +60,7 @@ development it is still `target: "web"`.
 Tasks:
 
 - [ ] Automate command composition.
-  - I wnat to move commands and and widgets to their own plugin when they are stable.
+  - I want to move commands and and widgets to their own plugin when they are stable.
   - To avoid having to touch `index.html` each time it should load them automatically.
   - [ ] Add a node script that iterates `/commands` and generates a `commands.tsx` file that registers each command.
   - [ ] Include as built step in `package.json`.
@@ -95,6 +96,15 @@ Tasks:
 - `rem.visibleSiblingRem` includes `rem`, but `rem.siblingRem` does not.
   - Naming inconsistency with `getChildren`.
 - `rem.setParent` does not add the the start of the rem as documented.
+- `rem.collapse(portalId)` and `rem.expand(portalId, recurse)` always require a portal id. The signatures should be as follows:
+  - `rem.collapse(portalContext?: RemId | Rem)`
+  - `rem.expand(portalContext?: RemId | Rem)`
+    - `rem.expand()` should have `recurse = false` as default (so it can be called without args)
+    - Or even better: `rem.expandRecursive(portalContext?: RemId | Rem)` new method to avoid having to pass a default value (`undefined` for `portalContext` or `false` for `recurse`, depending on order).
+  - `rem.isCollapsed(portalContext?: RemId | Rem)`
+  - `rem.setIsCollapsed(isCollapsed: boolean, portalContext?: RemId | Rem)`
+  - Workaround for v0.0.44: Pass `rem.parent` as portal context to `rem.collapse(...)` and `rem.expand(...)`.
+- `REM_TYPE` should not be exported in addition to `RemType`.
 
 Unclear:
 
