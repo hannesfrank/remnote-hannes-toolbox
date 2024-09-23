@@ -1,12 +1,24 @@
-import { AppEvents, RNPlugin, Rem, renderWidget, usePlugin, useTracker } from '@remnote/plugin-sdk';
-import { ReactNode, createContext, useContext } from 'react';
+import { AppEvents, RNPlugin, renderWidget, usePlugin, useTracker } from '@remnote/plugin-sdk';
+import { ReactNode, createContext, useContext, useState } from 'react';
 import { EventViewer } from '../components/dev/EventViewer';
 import RemNoteCSSProps from '../components/dev/RemNoteCSSProps';
 import '../style.css';
 import { H1, H2, H3 } from '../components/typography';
 import { RemViewer } from '../components/dev/RemViewer';
 import { formatValue } from '../util/dev_util';
+import Button from '../components/builtin/Button';
 
+/**
+ *
+ * The goal of this widget is twofold:
+ * 1. Inspect frequently needed info about rem.
+ * 2. Help a plugin developer discover available API methods without having him refer to the documentation.
+ *
+ * RemNote's API is split into namespaces. Namespace methods have the following variants:
+ * - Getters: Display the value they return
+ * - Functions that take no, or just simple arguments: Take inputs. They can be executed via button click.
+ * - Functions with complex arguments: Just link to the docs.
+ */
 export const DevDashboard = () => {
   const plugin = usePlugin();
 
@@ -21,6 +33,7 @@ export const DevDashboard = () => {
       </APINamespace>
       <APINamespace name="focus">
         <APIMethod method="getFocusedRem" />
+        <APIMethod method="getFocusedPortal" />
       </APINamespace>
       <APINamespace name="editor">
         <APIMethod method="getFocusedEditorText" />
@@ -48,14 +61,26 @@ export const DevDashboard = () => {
   );
 };
 
-const APINamespace = ({ name, children }: { name: keyof RNPlugin; children: ReactNode }) => (
-  <APINamespaceContext.Provider value={name}>
-    <div className="my-2">
-      <H3 className="font-mono">{name}</H3>
-      {children}
-    </div>
-  </APINamespaceContext.Provider>
-);
+const APINamespace = (props: {
+  name: keyof RNPlugin;
+  children: ReactNode;
+  isCollapsed?: boolean;
+}) => {
+  const [isCollapsed, setIsCollapsed] = useState(props.isCollapsed);
+
+  return (
+    <APINamespaceContext.Provider value={props.name}>
+      <div className="my-2">
+        <H3>
+          <Button onClick={() => setIsCollapsed(!isCollapsed)}>{isCollapsed ? '>' : 'v'}</Button>{' '}
+          {props.name}
+        </H3>
+        {isCollapsed ? null : props.children}
+      </div>
+    </APINamespaceContext.Provider>
+  );
+};
+APINamespace.defaultProps = { isCollapsed: true };
 
 const APINamespaceContext = createContext<keyof RNPlugin>('editor');
 
@@ -75,7 +100,7 @@ const APIMethod = (
     <div>
       <span className="text-sm font-normal font-mono">
         <DocLink namespace={namespace} method={props.method}>
-          {props.method}
+          {props.method}()
         </DocLink>
         :
       </span>{' '}
