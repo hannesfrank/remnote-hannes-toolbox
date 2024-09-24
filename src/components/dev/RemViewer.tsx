@@ -1,5 +1,6 @@
 import {
   AppEvents,
+  PORTAL_TYPE,
   Rem,
   RemId,
   RemType,
@@ -206,14 +207,26 @@ export function RemViewer(props: { remId: RemId; compact?: boolean }) {
             <table className="table-auto table">
               <tbody>
                 <GetterRow method="positionAmongstSiblings" rem={remToInspect} />
-                <GetterRow method="getLastPracticed" rem={remToInspect} />
+                <GetterRow
+                  method="getLastPracticed"
+                  rem={remToInspect}
+                  formatValue={formatTimestamp}
+                />
                 <GetterRow method="getLastTimeMovedTo" rem={remToInspect} />
                 <GetterRow method="getSchemaVersion" rem={remToInspect} />
                 <GetterRow method="embeddedQueueViewMode" rem={remToInspect} />
                 {/* <GetterRow method="isCollapsed" rem={remToInspect} /> */}
-                <GetterRow method="getPortalType" rem={remToInspect} />
+                <GetterRow
+                  method="getPortalType"
+                  rem={remToInspect}
+                  formatValue={(v) => formatEnumValue(v, PORTAL_TYPE, 'PORTAL_TYPE')}
+                />
                 <GetterRow method="getPortalDirectlyIncludedRem" rem={remToInspect} />
-                <GetterRow method="getType" rem={remToInspect} />
+                <GetterRow
+                  method="getType"
+                  rem={remToInspect}
+                  formatValue={(v) => formatEnumValue(v, RemType, 'RemType')}
+                />
                 <GetterRow method="getTagRems" rem={remToInspect} />
 
                 <GetterRow method="getEnablePractice" rem={remToInspect} />
@@ -257,7 +270,11 @@ const FieldRow = <T,>(props: {
 };
 
 // TODO: Add docs link and show possible values in case of enum. Maybe reuse component.
-const GetterRow = (props: { method: string; rem: Rem }) => {
+const GetterRow = (props: {
+  method: string;
+  rem: Rem;
+  formatValue?: (value: any) => ReactNode;
+}) => {
   // This updates only on rem change, but at least we can distinguish
   // undefined values from tracker not returning yet.
   // Probably does not matter so I just use useTracker.
@@ -278,16 +295,17 @@ const GetterRow = (props: { method: string; rem: Rem }) => {
 
   const value = useTracker(() => {
     return props.rem[props.method]();
-    // return props.rem.getTagRems();
   }, [props.rem._id]);
 
   // NVM, this is not reactive either
+
+  const formatValueFn = props.formatValue || formatValue;
 
   return (
     <tr className="font-mono text-sm">
       <td className="pr-2">{props.method}()</td>
 
-      <td>{formatValue(value)}</td>
+      <td>{formatValueFn(value)}</td>
     </tr>
   );
 };
