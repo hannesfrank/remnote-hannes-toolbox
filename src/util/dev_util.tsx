@@ -10,9 +10,13 @@ export function isRem(obj: any) {
   return obj instanceof Rem;
 }
 
-export function formatValue(value: unknown) {
+export function formatValue(value: unknown, fromEnum?: any) {
+  if (fromEnum) {
+    console.log(fromEnum);
+    return fromEnum[value as any];
+  }
   if (typeof value === 'string') {
-    return value;
+    return `"${value}"`;
   }
   if (typeof value === 'undefined') {
     return <em>undefined</em>;
@@ -26,6 +30,28 @@ export function formatValue(value: unknown) {
     })})`;
   }
   return JSON.stringify(value);
+}
+
+export function formatEnumValue(value: any, Enum: any, enumName: string) {
+  return (
+    <>
+      {`${enumName}.${Enum[value]}`}{' '}
+      <em className="rn-clr-content-tertiary">
+        {value === null ? 'null' : value === undefined ? 'undefined' : value}
+      </em>
+    </>
+  );
+}
+
+export function formatTimestamp(timestamp: number | undefined) {
+  return timestamp === undefined ? (
+    <em>undefined</em>
+  ) : (
+    <>
+      {new Date(timestamp).toLocaleString()}{' '}
+      <em className="rn-clr-content-tertiary">{timestamp}</em>
+    </>
+  );
 }
 
 const LOG_PREFIX = [`%c${manifest.id}:`, 'color: rgb(75,115,255); font-weight: bold'];
