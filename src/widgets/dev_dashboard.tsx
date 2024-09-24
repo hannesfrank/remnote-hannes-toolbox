@@ -7,7 +7,8 @@ import { H1, H2, H3 } from '../components/typography';
 import { RemViewer } from '../components/dev/RemViewer';
 import { formatValue } from '../util/dev_util';
 import Button from '../components/builtin/Button';
-
+import IconChevronDown from '~icons/tabler/chevron-down';
+import IconChevronRight from '~icons/tabler/chevron-right';
 /**
  *
  * The goal of this widget is twofold:
@@ -71,8 +72,11 @@ const APINamespace = (props: {
   return (
     <APINamespaceContext.Provider value={props.name}>
       <div className="my-2">
-        <H3>
-          <Button onClick={() => setIsCollapsed(!isCollapsed)}>{isCollapsed ? '>' : 'v'}</Button>{' '}
+        <H3 className="inline-flex items-center gap-2">
+          {/* TODO: Use an icon button */}
+          <Button onClick={() => setIsCollapsed(!isCollapsed)}>
+            {isCollapsed ? <IconChevronRight /> : <IconChevronDown />}
+          </Button>
           {props.name}
         </H3>
         {isCollapsed ? null : props.children}

@@ -11,7 +11,8 @@
     "skipLibCheck": true,
     "isolatedModules": true,
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": ["unplugin-icons/types/react"]
   },
   "ts-node": {
     "compilerOptions": {

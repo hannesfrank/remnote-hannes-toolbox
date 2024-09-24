@@ -107,6 +107,10 @@ const config = {
       ],
     }),
     fastRefresh,
+    require('unplugin-icons/webpack').default({
+      compiler: 'jsx',
+      jsx: 'react',
+    }),
   ].filter(Boolean),
 };
 
