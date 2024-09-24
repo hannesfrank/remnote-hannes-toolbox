@@ -17,21 +17,21 @@ const CUSTOM_POWERUP_REM_IDS = 'powerup-list.powerup-rem-ids';
 // * Features
 // Get builtin powerups of the current KB
 // Cache rem for each powerup in the KB
-//    - Isolated cache for all KBs
+//    - [ ] Isolated cache for all KBs
 // Find custom powerups
-//    - native: use window method
-//    - sandboxed: Iterate over all rem
+//    - [ ] native: use window of backend API method
+//    - [x] sandboxed: Iterate over all rem
 
 // * UI
 // For each powerup
 //    - Before caching: Button to start loading
 //    - ---
-//    - Powerup Name
-//    - Short description of what the powerup is for
-//    - List slots for powerup
-//    - Open Powerup
-//    - Number of uses for powerup
-//    - ? Delete custom Powerup
+//    - [x] Powerup Name and code
+//    - [ ] Short description of what the powerup is for
+//    - [ ] List slots for powerup
+//    - [x] Open Powerup
+//    - [ ] Number of uses for powerup
+//    - [ ] Delete custom Powerup (if available at some point)
 //    - ---
 //    - Button at the bottom to find custom powerups
 
@@ -82,7 +82,6 @@ const CustomPowerupList = () => {
   const plugin = usePlugin();
 
   const [cacheChecked, setCacheChecked] = useState(false);
-  const [customPowerupsLoaded, setCustomPowerupsLoaded] = useState(false);
   const [customPowerupsLoading, setCustomPowerupsLoading] = useState(false);
 
   const [customPowerups, setCustomPowerups] = useState<Rem[] | undefined>();
