@@ -9,6 +9,7 @@ import FormatKeyboardShortcutCommand, {
 } from '../commands/FormatKeyboardShortcutCommand';
 import { REM_IDS } from '../constants/remIds';
 import JoinChildrenCommand from '../commands/JoinChildren';
+import SendReferenceToToday from '../commands/SendReferenceToToday';
 
 async function onActivate(plugin: ReactRNPlugin) {
   if (isDevMode()) {
@@ -79,6 +80,7 @@ async function onActivate(plugin: ReactRNPlugin) {
   );
 
   await plugin.app.registerCommand(JoinChildrenCommand(plugin));
+  await plugin.app.registerCommand(SendReferenceToToday(plugin));
 
   if (isDevMode() && RN_PLUGIN_TEST_MODE.has(FormatKeyboardShortcutCommandId)) {
     await testFormatKeyboardShortcut(plugin);

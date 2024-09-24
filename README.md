@@ -44,6 +44,23 @@ Format the back side of a rem to match the formatting needed for the shortcut cu
 
 #### Command: Join children/siblings of a rem.
 
+Join all children of a rem, or all siblings, if the focused rem has no children, into a new rem.
+
+Use Case: When pasting into RemNote sometimes the content is split into too many lines.
+This command helps with cleanup.
+
+Note: This command creates a new rem with the joined content, and does not delete the old rem.
+Thereby it avoid handling backText, descendants, tags and other special cases.
+The user can delete the old rem manually after processing when satisfied with the result.
+
+<!-- TODO: Image -->
+
+#### Command: Send rem as reference to Today
+
+Add a reference to the currently focused rem to Today's Document.
+
+Use Case: Keep track of what you are working on.
+
 <!-- TODO: Image -->
 
 ## Notes
@@ -86,6 +103,21 @@ Tasks:
 - Support setting title in plugin panes.
   - How does the plugin store data in the `paneIdToDocumentIdMap`? I know Bijay made this.
 - Given a powerup rem you cannot get its `powerupCode`. E.g. to analyse custom powerups.
+- Daily Document Handling
+  - Cannot reasonably get the rem for today/a specific date.
+  - Cannot savely create a daily document.
+- `REM_TYPE` should not be exported in addition to `RemType`.
+- `RemColor` is exported, but Highlight color are literal strings and not an enum
+  - `rem.getHighlightColor()` and `rem.setHighlightColor()` should use an enum
+  - Same with todo status and font size. Work with enum values, not strings.
+- Property handling
+  - Inconsistency/redundance between powerup based properties (`rem.getPowerupProperty`, `rem.getPowerupPropertyAsRem`, `rem.getPowerupPropertyAsRichText`) and normal properties (`rem.getTagPropertyAsRem`, `rem.getTagPropertyValue`)
+  - `plugin.powerup.getPowerupSlotByCode` should be renamed to property terminology
+  - `rem.getTagPropertyAs..`
+    - rename to just `getPropertyAs...`
+    - take `RemId | Rem` as param
+- `rem.taggedRem()` inconsistent with `rem.getTagRems` (missing `get` and pluralisation of Rem(s))
+
 
 #### API Bugs
 
@@ -104,7 +136,7 @@ Tasks:
   - `rem.isCollapsed(portalContext?: RemId | Rem)`
   - `rem.setIsCollapsed(isCollapsed: boolean, portalContext?: RemId | Rem)`
   - Workaround for v0.0.44: Pass `rem.parent` as portal context to `rem.collapse(...)` and `rem.expand(...)`.
-- `REM_TYPE` should not be exported in addition to `RemType`.
+- `plugin.focus.getFocusedRem()` returns the document when focusing on a rem in a property located in the document head
 
 Unclear:
 
