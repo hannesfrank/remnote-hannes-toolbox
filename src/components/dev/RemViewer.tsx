@@ -2,14 +2,15 @@ import {
   AppEvents,
   Rem,
   RemId,
+  RemType,
   useAPIEventListener,
   usePlugin,
   useTracker,
 } from '@remnote/plugin-sdk';
 import { H2, H3 } from '../typography';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import clsx from 'clsx';
-import { formatValue } from '../../util/dev_util';
+import { formatEnumValue, formatTimestamp, formatValue } from '../../util/dev_util';
 
 /* 
  * All Rem Methods
@@ -110,9 +111,9 @@ export function RemViewer(props: { remId: RemId; compact?: boolean }) {
   const [remId, setRemId] = useState<RemId>('');
   const [remIdValid, setRemIdValid] = useState<boolean>(false);
 
-  useAPIEventListener(AppEvents.FocusedRemChange, undefined, (args) => {
-    console.log('Focus Rem, Args:', args);
-  });
+  // useAPIEventListener(AppEvents.FocusedRemChange, undefined, (args) => {
+  //   console.log('Focus Rem, Args:', args);
+  // });
 
   const remToInspect = useTracker(
     async (plugin) => {
@@ -131,7 +132,6 @@ export function RemViewer(props: { remId: RemId; compact?: boolean }) {
       } else {
         rem = plugin.focus.getFocusedRem();
       }
-      console.log(rem);
       return rem;
     },
     [remId]
@@ -174,12 +174,28 @@ export function RemViewer(props: { remId: RemId; compact?: boolean }) {
             <table className="table-auto table">
               <tbody>
                 <FieldRow field="_id" value={remToInspect._id} />
-                <FieldRow field="createdAt" value={remToInspect.createdAt} />
-                <FieldRow field="localUpdatedAt" value={remToInspect.localUpdatedAt} />
-                <FieldRow field="updatedAt" value={remToInspect.updatedAt} />
+                <FieldRow
+                  field="createdAt"
+                  value={remToInspect.createdAt}
+                  formatValue={formatTimestamp}
+                />
+                <FieldRow
+                  field="localUpdatedAt"
+                  value={remToInspect.localUpdatedAt}
+                  formatValue={formatTimestamp}
+                />
+                <FieldRow
+                  field="updatedAt"
+                  value={remToInspect.updatedAt}
+                  formatValue={formatTimestamp}
+                />
                 <FieldRow field="parent" value={remToInspect.parent} />
                 <FieldRow field="children" value={remToInspect.children} />
-                <FieldRow field="type" value={remToInspect.type} />
+                <FieldRow
+                  field="type"
+                  value={remToInspect.type}
+                  formatValue={(value: RemType) => formatEnumValue(value, RemType, 'RemType')}
+                />
                 <FieldRow field="text" value={remToInspect.text} />
                 <FieldRow field="backText" value={remToInspect.backText} />
               </tbody>
@@ -226,11 +242,16 @@ export function RemViewer(props: { remId: RemId; compact?: boolean }) {
   );
 }
 
-const FieldRow = (props: { field: string; value: unknown }) => {
+const FieldRow = <T,>(props: {
+  field: string;
+  value: T;
+  formatValue?: (value: T) => ReactNode;
+}) => {
+  const formatValueFn = props.formatValue || formatValue;
   return (
     <tr className="font-mono text-sm">
       <td className="pr-2">{props.field}</td>
-      <td>{formatValue(props.value)}</td>
+      <td>{formatValueFn(props.value)}</td>
     </tr>
   );
 };
