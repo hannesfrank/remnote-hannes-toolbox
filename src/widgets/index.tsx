@@ -86,7 +86,23 @@ async function onActivate(plugin: ReactRNPlugin) {
     await testFormatKeyboardShortcut(plugin);
   }
 
-  plugin.app.stealKeys(['opt+v']);
+  if (isDevMode()) {
+    await plugin.app.registerCommand({
+      id: 'test-storage-event',
+      name: 'Test Storage Event',
+      action: async () => {
+        await plugin.storage.setLocal('test', Math.random());
+        await plugin.storage.setSynced('test', Math.random());
+        await plugin.storage.setSession('test', Math.random());
+        console.log('local', await plugin.storage.getLocal('test'));
+        console.log('synced', await plugin.storage.getSynced('test'));
+        console.log('session', await plugin.storage.getSession('test'));
+      },
+    });
+    useAPIEventListener(AppEvents.StealKeyEvent, plugin.id, (e) => {
+      console.log('StealKeyEvent', e);
+    });
+  }
 }
 
 async function onDeactivate(_: ReactRNPlugin) {}

@@ -1,4 +1,4 @@
-import { AppEvent, useAPIEventListener, usePlugin } from '@remnote/plugin-sdk';
+import { AppEvent, AppEventListerKey, useAPIEventListener, usePlugin } from '@remnote/plugin-sdk';
 import { useState } from 'react';
 import Button from '../builtin/Button';
 
@@ -8,14 +8,18 @@ interface EventLogEntry {
   args: any;
 }
 
-export function EventViewer(props: { event: AppEvent; enabled: boolean }) {
+export function EventViewer(props: {
+  event: AppEvent;
+  listenerKey: AppEventListerKey;
+  enabled: boolean;
+}) {
   const plugin = usePlugin();
   const [events, setEvents] = useState<EventLogEntry[]>([]);
   const [showAll, setShowAll] = useState(false);
   const [enabled, setEnabled] = useState(props.enabled);
 
   // app.stealKeys uses plugin id as listener key
-  useAPIEventListener(props.event, plugin.id, (args) => {
+  useAPIEventListener(props.event, props.listenerKey, (args) => {
     if (!enabled) return;
     console.log('Event:', props.event, 'Args:', args);
     setEvents((events) =>
@@ -41,7 +45,7 @@ export function EventViewer(props: { event: AppEvent; enabled: boolean }) {
         )}
         <span className="font-mono text-sm">{props.event}</span>
         <Button className="!py-1 !px-2" onClick={() => setEvents([])}>
-          Clear Button
+          Clear
         </Button>
       </div>
       {enabled && (

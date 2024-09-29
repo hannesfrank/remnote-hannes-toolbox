@@ -45,7 +45,9 @@ export const DevDashboard = () => {
       <H2>Events</H2>
       <div className="columns-[180px] font-mono text-xs w-full">
         {/* TODO: Support start/stop listening to other events here.
-                Do I need to add an input for arbitrary listener keys or can I listen to everything?
+            Events usually only can be listened to given a specific listener key.
+            TODO: Need some creation form where the app dev can input the listener keys they are currently working with
+            and create EventViewers on the fly.
           */}
         {Object.keys(AppEvents)
           .filter((event) => !['onActivate', 'onDeactivate'].includes(event))
@@ -56,7 +58,8 @@ export const DevDashboard = () => {
             </div>
           ))}
       </div>
-      <EventViewer event={AppEvents.StealKeyEvent} enabled />
+      <EventViewer event={AppEvents.StealKeyEvent} listenerKey={plugin.id} enabled />
+      {/* <EventViewer event={AppEvents.StorageLocalChange} listenerKey="test" enabled /> */}
       <RemNoteCSSProps />
     </div>
   );
