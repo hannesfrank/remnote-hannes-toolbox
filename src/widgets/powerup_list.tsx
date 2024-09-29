@@ -36,7 +36,7 @@ const CUSTOM_POWERUP_REM_IDS = 'powerup-list.powerup-rem-ids';
 //    - Button at the bottom to find custom powerups
 
 export const PowerupList = () => (
-  <div className="h-full overflow-auto p-2">
+  <div className="h-full overflow-auto p-2 box-border">
     <BuiltinPowerupList />
     <CustomPowerupList />
   </div>
@@ -159,19 +159,16 @@ const CustomPowerupList = () => {
 
     setCustomPowerups(customPowerups);
     setCustomPowerupsLoading(false);
-    setCustomPowerupsLoaded(true);
   };
 
   return (
     <>
-      <H1>
-        Custom Powerups
-        {cacheChecked && customPowerups ? (
-          <Button className="mx-2 align-bottom font-normal" onClick={findCustomPowerups}>
-            Refind
-          </Button>
-        ) : null}
-      </H1>
+      <H1>Custom Powerups</H1>
+      {cacheChecked && customPowerups ? (
+        <Button className="align-bottom font-normal" onClick={findCustomPowerups}>
+          Refind
+        </Button>
+      ) : null}
 
       {customPowerupsLoading ? (
         <span className="italic">
@@ -204,9 +201,11 @@ const CustomPowerupRow = (props: { remId: string }) => {
     [props.remId]
   );
   return (
-    <div className="flex gap-2 items-center my-1">
-      <span className="font-semibold">{powerup?.name}</span>
-      <Small className="rn-clr-content-tertiary">{powerup?.rem?._id}</Small>
+    <div className="flex gap-2 items-center my-1 overflow-hidden">
+      <span className="font-semibold flex-shrink whitespace-nowrap">{powerup?.name}</span>
+      <Small className="rn-clr-content-tertiary flex-shrink overflow-hidden overflow-ellipsis">
+        {powerup?.rem?._id}
+      </Small>
       <Button
         className="ml-auto"
         onClick={() => {
