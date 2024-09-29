@@ -1,4 +1,11 @@
-import { AppEvents, RNPlugin, renderWidget, usePlugin, useTracker } from '@remnote/plugin-sdk';
+import {
+  AppEvents,
+  RNPlugin,
+  renderWidget,
+  useLocalStorageState,
+  usePlugin,
+  useTracker,
+} from '@remnote/plugin-sdk';
 import { ReactNode, createContext, useContext, useState } from 'react';
 import { EventViewer } from '../components/dev/EventViewer';
 import RemNoteCSSProps from '../components/dev/RemNoteCSSProps';
@@ -70,7 +77,8 @@ const APINamespace = (props: {
   children: ReactNode;
   isCollapsed?: boolean;
 }) => {
-  const [isCollapsed, setIsCollapsed] = useState(props.isCollapsed);
+  const isCollapsedStorageKey = `dev_dashboard.APINamespace-collapsed.${props.name}`;
+  const [isCollapsed, setIsCollapsed] = useLocalStorageState(isCollapsedStorageKey, false);
 
   return (
     <APINamespaceContext.Provider value={props.name}>
