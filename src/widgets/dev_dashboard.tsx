@@ -18,14 +18,14 @@ import IconChevronDown from '~icons/tabler/chevron-down';
 import IconChevronRight from '~icons/tabler/chevron-right';
 /**
  *
- * The goal of this widget is twofold:
- * 1. Inspect frequently needed info about rem.
- * 2. Help a plugin developer discover available API methods without having him refer to the documentation.
+ * This widget helps plugin developers to:
+ * 1. Inspect internal data about about rem.
+ * 2. Learn available API methods without having to refer to the documentation.
  *
  * RemNote's API is split into namespaces. Namespace methods have the following variants:
  * - Getters: Display the value they return
- * - Functions that take no, or just simple arguments: Take inputs. They can be executed via button click.
- * - Functions with complex arguments: Just link to the docs.
+ * - Actions: Functions that take no, or just simple arguments: They can be executed via button click.
+ * - Complex: Functions with complex arguments: Just link to the docs.
  */
 export const DevDashboard = () => {
   const plugin = usePlugin();
@@ -36,16 +36,41 @@ export const DevDashboard = () => {
       <H2>Namespaces</H2>
       {/* TODO: Add more API commands */}
       <APINamespace name="app">
-        <APIMethod method="getOperatingSystem" />
-        <APIMethod method="getPlatform" />
+        <APIMethod method="getOperatingSystem" type={'getter'} />
+        <APIMethod method="getPlatform" type={'getter'} />
       </APINamespace>
       <APINamespace name="focus">
-        <APIMethod method="getFocusedRem" />
-        <APIMethod method="getFocusedPortal" />
+        <APIMethod method="getFocusedRem" type={'getter'} />
+        <APIMethod method="getFocusedPortal" type={'getter'} />
       </APINamespace>
       <APINamespace name="editor">
-        <APIMethod method="getFocusedEditorText" />
-        <APIMethod method="getSelection" />
+        <APIMethod method="getFocusedEditorText" type={'getter'} />
+        <APIMethod method="getSelection" type={'getter'} />
+      </APINamespace>
+      <APINamespace name="window">
+        <APIMethod method="getURL" type={'getter'} />
+        <APIMethod method="setURL" />
+
+        <APIMethod method="stealKeys" />
+        <APIMethod method="releaseKeys" />
+        <APIMethod method="openFloatingWidget" />
+        <APIMethod method="closeFloatingWidget" />
+        <APIMethod method="isFloatingWidgetOpen" />
+        <APIMethod method="setFloatingWidgetPosition" />
+        <APIMethod method="closeAllFloatingWidgets" type={'action'} />
+        <APIMethod method="getCurrentWindowTree" type={'getter'} />
+        <APIMethod method="setRemWindowTree" />
+        <APIMethod method="getLastFocusedPane" type={'getter'} />
+        <APIMethod method="setCurrentWindowTreeFromString" />
+        <APIMethod method="getOpenPaneIds" />
+        <APIMethod method="getFocusedPaneId" type={'getter'} />
+        <APIMethod method="setFocusedPaneId" />
+        <APIMethod method="openRem" />
+        <APIMethod method="getOpenPaneRemIds" type={'getter'} />
+        <APIMethod method="getOpenPaneRemId" />
+        <APIMethod method="openWidgetInPane" />
+        <APIMethod method="openWidgetInRightSidebar" />
+        <APIMethod method="isOnPage" />
       </APINamespace>
       <H2>Inspect Rem</H2>
       <RemViewer remId={''} />
@@ -66,7 +91,7 @@ export const DevDashboard = () => {
           ))}
       </div>
       <EventViewer event={AppEvents.StealKeyEvent} listenerKey={plugin.id} enabled />
-      {/* <EventViewer event={AppEvents.StorageLocalChange} listenerKey="test" enabled /> */}
+      <EventViewer event={AppEvents.StorageLocalChange} listenerKey="test" enabled />
       <RemNoteCSSProps />
     </div>
   );
@@ -100,9 +125,28 @@ APINamespace.defaultProps = { isCollapsed: true };
 const APINamespaceContext = createContext<keyof RNPlugin>('editor');
 
 const APIMethod = (
-  props: { method: string; value?: (plugin: RNPlugin) => unknown },
-  doc?: ReactNode | string
+  props: {
+    method: string;
+    type?: 'getter' | 'action';
+    value?: (plugin: RNPlugin) => unknown;
+  }
+  // TODO: Inject docstring as tooltip. Probably need some typescript parsing to extract docstring.
+  // doc?: ReactNode | string
 ) => {
+  return (
+    <div>
+      {props.type === 'getter' ? (
+        <APIMethodGetter method={props.method} value={props.value} />
+      ) : props.type === 'action' ? (
+        <APIMethodAction method={props.method} />
+      ) : (
+        <APIMethodDocumentOnly method={props.method} />
+      )}
+    </div>
+  );
+};
+
+const APIMethodGetter = (props: { method: string; value?: (plugin: RNPlugin) => unknown }) => {
   const namespace = useContext(APINamespaceContext);
   const defaultValueFunc = (plugin: RNPlugin) => {
     const n = plugin[namespace];
@@ -112,14 +156,42 @@ const APIMethod = (
   const methodResult = useTracker(props.value || defaultValueFunc);
 
   return (
+    <>
+      <span className="text-sm font-normal font-mono">
+        <DocLink namespace={namespace} method={props.method}>
+          {props.method}()
+        </DocLink>
+      </span>
+      <span className="text-xs">: {formatValue(methodResult)}</span>
+    </>
+  );
+};
+
+const APIMethodDocumentOnly = (props: { method: string }) => {
+  const namespace = useContext(APINamespaceContext);
+
+  return (
     <div>
       <span className="text-sm font-normal font-mono">
         <DocLink namespace={namespace} method={props.method}>
           {props.method}()
         </DocLink>
-        :
-      </span>{' '}
-      <span className="text-xs">{formatValue(methodResult)}</span>
+      </span>
+    </div>
+  );
+};
+
+const APIMethodAction = (props: { method: string }) => {
+  const namespace = useContext(APINamespaceContext);
+
+  return (
+    <div className="flex gap-1 items-baseline">
+      <span className="text-sm font-normal font-mono">
+        <DocLink namespace={namespace} method={props.method}>
+          {props.method}()
+        </DocLink>
+      </span>
+      <Button>▶</Button>
     </div>
   );
 };
