@@ -1,4 +1,4 @@
-import { declareIndexPlugin, ReactRNPlugin, WidgetLocation } from '@remnote/plugin-sdk';
+import { AppEvents, declareIndexPlugin, ReactRNPlugin, WidgetLocation } from '@remnote/plugin-sdk';
 import '../style.css';
 import '../App.css';
 import { writeFileSync } from 'fs';
@@ -33,15 +33,6 @@ async function onActivate(plugin: ReactRNPlugin) {
     );
   }
 
-  await plugin.app.registerCommand({
-    id: 'editor-command',
-    name: 'Write File',
-    action: async () => {
-      // await writeFileSync('/Users/hannesfrank/fromRemNote', "Hello from remnote");
-      plugin.editor.insertPlainText('Hello World!');
-    },
-  });
-
   await plugin.app.registerWidget('dev_dashboard', WidgetLocation.Pane, {});
 
   await plugin.app.registerCommand({
@@ -65,6 +56,8 @@ async function onActivate(plugin: ReactRNPlugin) {
     // Title is not visible in sidebar when icon is present
     widgetTabTitle: 'Powerups',
     // For icon use data url generated from https://iconify.design/
+    // Unfortunately, the data url is injected into an <img> and therefore the currentColor does not transfer.
+    // tabler:bolt-filled
     widgetTabIcon:
       'data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="32" height="32" viewBox="0 0 32 32"%3E%3Cpath fill="currentColor" d="M16 3C8.832 3 3 8.832 3 16s5.832 13 13 13s13-5.832 13-13S23.168 3 16 3zm0 2c6.087 0 11 4.913 11 11s-4.913 11-11 11S5 22.087 5 16S9.913 5 16 5zm0 3.875l-.72.72l-5.686 5.686L11 16.72l4-4V23h2V12.72l4 4l1.406-1.44l-5.687-5.686l-.72-.72z"%2F%3E%3C%2Fsvg%3E',
   });
@@ -82,11 +75,23 @@ async function onActivate(plugin: ReactRNPlugin) {
   await plugin.app.registerCommand(JoinChildrenCommand(plugin));
   await plugin.app.registerCommand(SendReferenceToToday(plugin));
 
+  // Leader Key
+  plugin.app.stealKeys(['cmd+j']);
+
   if (isDevMode() && RN_PLUGIN_TEST_MODE.has(FormatKeyboardShortcutCommandId)) {
     await testFormatKeyboardShortcut(plugin);
   }
 
   if (isDevMode()) {
+    await plugin.app.registerCommand({
+      id: 'editor-command',
+      name: 'Write File',
+      action: async () => {
+        // await writeFileSync('/Users/hannesfrank/fromRemNote', "Hello from remnote");
+        plugin.editor.insertPlainText('Hello World!');
+      },
+    });
+
     await plugin.app.registerCommand({
       id: 'test-storage-event',
       name: 'Test Storage Event',
@@ -99,7 +104,32 @@ async function onActivate(plugin: ReactRNPlugin) {
         console.log('session', await plugin.storage.getSession('test'));
       },
     });
-    useAPIEventListener(AppEvents.StealKeyEvent, plugin.id, (e) => {
+
+    await plugin.app.registerCommand({
+      id: 'test-css',
+      name: 'Test CSS',
+      action: async () => {
+        const color = ['red', 'green', 'blue'][Math.floor(Math.random() * 3)];
+        plugin.app.registerCSS('background', `.rem-text { color: ${color};`);
+      },
+    });
+
+    await plugin.app.registerCommand({
+      id: 'test-collapse',
+      name: 'Test Collapse',
+      action: async () => {
+        const portal = await plugin.rem.findOne('qwGlv7Y4EmTtkTyGb')!;
+        const remToCollapse = await plugin.rem.findOne('2ColYku7RH8VEwxNR')!;
+        console.log('rem rem type', await remToCollapse?.getType(), remToCollapse?.type);
+        console.log('portal rem type', await portal?.getType(), portal?.type);
+        console.log('portal type', await portal?.getPortalType(), portal?.type);
+        await remToCollapse?.collapse(remToCollapse.parent!);
+        await remToCollapse?.expand(remToCollapse.parent!, false);
+        await remToCollapse?.setIsCollapsed(true, remToCollapse.parent!);
+      },
+    });
+
+    plugin.event.addListener(AppEvents.StealKeyEvent, plugin.id, (e) => {
       console.log('StealKeyEvent', e);
     });
   }
