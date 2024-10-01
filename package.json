@@ -3,6 +3,9 @@
   "name": "hannes-remnote-toolbox",
   "version": "0.0.1",
   "license": "MIT",
+  "bin": {
+    "rn-toolbox": "./scripts/rn-toolbox.ts"
+  },
   "scripts": {
     "check-types": "tsc",
     "dev": "cross-env NODE_ENV=development webpack-dev-server --color --progress --no-open",
@@ -31,12 +34,14 @@
     "@types/underscore": "^1.11.6",
     "autoprefixer": "^10.4.7",
     "bestzip": "^2.2.1",
+    "commander": "^12.1.0",
     "concurrently": "^7.2.2",
     "copy-webpack-plugin": "^11.0.0",
     "cross-env": "^7.0.3",
     "css-loader": "^6.7.1",
     "esbuild-loader": "^2.19.0",
     "html-webpack-plugin": "^5.5.0",
+    "lodash": "^4.17.21",
     "mini-css-extract-plugin": "^2.6.1",
     "postcss": "^8.4.14",
     "postcss-import": "^14.1.0",
