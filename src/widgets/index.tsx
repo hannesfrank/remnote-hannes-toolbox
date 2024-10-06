@@ -5,11 +5,12 @@ import { writeFileSync } from 'fs';
 import { isDevMode, isSandboxed, RN_PLUGIN_TEST_MODE } from '../util/plugin_util';
 import FormatKeyboardShortcutCommand, {
   testFormatKeyboardShortcut,
-  COMMAND_ID as FormatKeyboardShortcutCommandId,
+  COMMAND_INFO as FormatKeyboardShortcutCommandInfo,
 } from '../commands/FormatKeyboardShortcutCommand';
 import { REM_IDS } from '../constants/remIds';
 import JoinChildrenCommand from '../commands/JoinChildren';
 import SendReferenceToToday from '../commands/SendReferenceToToday';
+import QueryBigRemCommand from '../commands/QueryBigRem';
 
 async function onActivate(plugin: ReactRNPlugin) {
   if (isDevMode()) {
@@ -72,13 +73,14 @@ async function onActivate(plugin: ReactRNPlugin) {
     })
   );
 
+  await plugin.app.registerCommand(QueryBigRemCommand(plugin));
   await plugin.app.registerCommand(JoinChildrenCommand(plugin));
   await plugin.app.registerCommand(SendReferenceToToday(plugin));
 
   // Leader Key
   plugin.app.stealKeys(['cmd+j']);
 
-  if (isDevMode() && RN_PLUGIN_TEST_MODE.has(FormatKeyboardShortcutCommandId)) {
+  if (isDevMode() && RN_PLUGIN_TEST_MODE.has(FormatKeyboardShortcutCommandInfo.id)) {
     await testFormatKeyboardShortcut(plugin);
   }
 

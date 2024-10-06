@@ -9,8 +9,11 @@ import {
 import _ from 'underscore';
 import { RN_PLUGIN_TEST_MODE } from '../util/plugin_util';
 
-export const COMMAND_ID = 'format-keyboard-shortcut';
-export const COMMAND_NAME = 'Format Back as Keyboard Shortcut';
+export const COMMAND_INFO = {
+  id: 'format-keyboard-shortcut',
+  name: 'Format Back as Keyboard Shortcut',
+  description: 'Format backside of rem as keyboard shortcut.',
+};
 
 // RN_PLUGIN_TEST_MODE.add(COMMAND_ID);
 
@@ -93,10 +96,7 @@ export default function FormatKeyboardShortcutCommand(
   options: { getShortcutTag?: () => Promise<RemId | null> } = {}
 ): Command {
   return {
-    id: COMMAND_ID,
-    name: COMMAND_NAME,
-    description: 'Format backside of rem as keyboard shortcut.',
-
+    ...COMMAND_INFO,
     action: async () => {
       const rem = await plugin.focus.getFocusedRem();
       if (!rem || !rem.backText) {
@@ -145,7 +145,7 @@ export async function testFormatKeyboardShortcut(plugin: RNPlugin) {
 }
 
 function formatBold(text: string) {
-  if (RN_PLUGIN_TEST_MODE.has(COMMAND_ID)) {
+  if (RN_PLUGIN_TEST_MODE.has(COMMAND_INFO.id)) {
     return `[B]${text}[/B]`;
   }
   return {

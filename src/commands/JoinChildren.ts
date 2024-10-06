@@ -1,17 +1,18 @@
 import { Command, RNPlugin } from '@remnote/plugin-sdk';
 import { pluginWarn } from '../util/dev_util';
+import { COMMAND_ID } from './SendReferenceToToday';
 
-export const COMMAND_ID = 'join-children-or-sibling-rem';
-export const COMMAND_NAME = 'Join children/siblings';
+const COMMAND_INFO = {
+  id: 'join-children-or-sibling-rem',
+  name: 'Join children/siblings',
+  description: 'Join children of a rem, or siblings if there are none, into a new rem.',
+};
 
 // RN_PLUGIN_TEST_MODE.add(COMMAND_ID);
 
 export default function JoinChildrenCommand(plugin: RNPlugin, options: {} = {}): Command {
   return {
-    id: COMMAND_ID,
-    name: COMMAND_NAME,
-    description: 'Join children of a rem, or siblings if there are none, into a new rem.',
-
+    ...COMMAND_INFO,
     action: async () => {
       const rem = await plugin.focus.getFocusedRem();
       if (!rem) {

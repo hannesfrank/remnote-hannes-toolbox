@@ -1,11 +1,14 @@
 import { BuiltInPowerupCodes, Command, PowerupSlotCodeMap, RNPlugin } from '@remnote/plugin-sdk';
 import { pluginWarn } from '../util/dev_util';
 
-export const COMMAND_ID = 'send-reference-to-today';
-export const COMMAND_NAME = 'Send rem as reference to Today';
-export const COMMAND_DESCRIPTION = 'Send rem as reference to Today';
-
+const COMMAND_INFO = {
+  id: 'send-reference-to-today',
+  name: 'Send rem as reference to Today',
+  description: 'Send rem as reference to Today',
+};
 // RN_PLUGIN_TEST_MODE.add(COMMAND_ID);
+
+// See also: https://github.com/00x0101101/RN_StampNow
 
 // TODO: Allow prefixing with timestamp.
 // TODO: Allow sending to other rem.
@@ -13,14 +16,11 @@ export const COMMAND_DESCRIPTION = 'Send rem as reference to Today';
 
 export default function SendReference(plugin: RNPlugin, options: {} = {}): Command {
   return {
-    id: COMMAND_ID,
-    name: COMMAND_NAME,
-    description: COMMAND_DESCRIPTION,
-
+    ...COMMAND_INFO,
     action: async () => {
       const remToSend = await plugin.focus.getFocusedRem();
       if (!remToSend) {
-        pluginWarn(COMMAND_ID, 'Focus Rem first!');
+        pluginWarn(COMMAND_INFO.id, 'Focus Rem first!');
         return;
       }
 
@@ -31,7 +31,7 @@ export default function SendReference(plugin: RNPlugin, options: {} = {}): Comma
       const dailyDocuments = await dailyDocumentPowerup?.taggedRem();
 
       if (!dailyDocuments) {
-        pluginWarn(COMMAND_ID, 'Could not get Daily Documents.', dailyDocuments);
+        pluginWarn(COMMAND_INFO.id, 'Could not get Daily Documents.', dailyDocuments);
         return;
       }
       const dailyDocsMap = new Map();
@@ -72,7 +72,7 @@ export default function SendReference(plugin: RNPlugin, options: {} = {}): Comma
         }
       }
       if (!todayDocument) {
-        pluginWarn(COMMAND_ID, 'Could not find today document', todayDocument);
+        pluginWarn(COMMAND_INFO.id, 'Could not find today document', todayDocument);
         plugin.app.toast("Please create today's document first!");
         return;
       }
